@@ -1,23 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { IoMdCall } from 'react-icons/io';
 import { AiOutlineMinusCircle, AiOutlineExpandAlt, AiTwotoneUpCircle, AiTwotoneDownCircle } from 'react-icons/ai';
-// import { useDispatch } from 'react-redux';
-// import { RootState } from '../../store';
-// import { updateCallState, endCall } from '../../store/slices/callSlice';
-// import { useNavigate } from 'react-router-dom';
+import { RiRobot2Line } from 'react-icons/ri';
 import useCallState from '../../hooks/useCallState';
+import AgentChat from './AgentChat'; // Import the separate AgentChat component
 
 const Footer: React.FC = () => {
     const [isSoftphoneOpen, setIsSoftphoneOpen] = useState(false);
     const [isMinimized, setIsMinimized] = useState(false);
     const buttonRef = useRef<HTMLButtonElement>(null);
-    const callState = useCallState(); // Use our hook to monitor call state
-    // const dispatch = useDispatch();
-    // const navigate = useNavigate();
+    const callState = useCallState();
 
     const [isToolboxOpen, setIsToolboxOpen] = useState(false);
     const [isToolboxMinimized, setIsToolboxMinimized] = useState(false);
     const ToolboxbuttonRef = useRef<HTMLButtonElement>(null);
+    
+    // Agent Chat state
+    const [isAgentChatOpen, setIsAgentChatOpen] = useState(false);
+    const [isAgentChatMinimized, setIsAgentChatMinimized] = useState(false);
+    const agentChatButtonRef = useRef<HTMLButtonElement>(null);
 
     // Show softphone when call becomes active
     useEffect(() => {
@@ -46,6 +47,16 @@ const Footer: React.FC = () => {
             setIsToolboxMinimized(false);
         }
     };
+    
+    // Handle Agent Chat toggle
+    const handleAgentChatClick = () => {
+        if (isAgentChatOpen) {
+            setIsAgentChatMinimized(!isAgentChatMinimized);
+        } else {
+            setIsAgentChatOpen(true);
+            setIsAgentChatMinimized(false);
+        }
+    };
 
     // Calculate position relative to Softphone button
     const getPopupStyle = () => {
@@ -57,21 +68,26 @@ const Footer: React.FC = () => {
         };
     };
 
-    // Calculate position relative to Softphone button
+    // Calculate position for toolbox
     const getToolboxPopupStyle = () => {
-        // if (!ToolboxbuttonRef.current) return {};
-        // const ToolboxbuttonRect = ToolboxbuttonRef.current.getBoundingClientRect();
-        // return {
-        //     bottom: `calc(100vh - ${ToolboxbuttonRect.top}px)`,
-        //     left: `${ToolboxbuttonRect.left}px`,
-        // };
         if (!ToolboxbuttonRef.current || !buttonRef.current) return {};
         const toolboxButtonRect = ToolboxbuttonRef.current.getBoundingClientRect();
         const softphoneButtonRect = buttonRef.current.getBoundingClientRect();
 
         return {
-            bottom: `calc(100vh - ${toolboxButtonRect.top}px + 50px)`, // Position above the button
-            left: `${softphoneButtonRect.right + 10}px`, // Position beside the Softphone popup
+            bottom: `calc(100vh - ${toolboxButtonRect.top}px + 50px)`,
+            left: `${softphoneButtonRect.right + 10}px`,
+        };
+    };
+    
+    // Calculate position for agent chat
+    const getAgentChatPopupStyle = () => {
+        if (!agentChatButtonRef.current) return {};
+        const agentChatButtonRect = agentChatButtonRef.current.getBoundingClientRect();
+        
+        return {
+            bottom: `calc(100vh - ${agentChatButtonRect.top}px)`,
+            left: `${agentChatButtonRect.left - 300}px`, // Position more to the left
         };
     };
 
@@ -118,7 +134,7 @@ const Footer: React.FC = () => {
                         : 'opacity-100 scale-100 translate-y-0'
                     } bottom-8 left-100 w-70 bg-white rounded-t-lg shadow-lg border border-gray-200`}>
                 <div className="flex justify-between items-center p-2 bg-gray-400 rounded-t-lg">
-                    <span className="text-sm font-semibold">Genesys Softphone</span>
+                    <span className="text-sm font-semibold">Genesys Toolbox</span>
                     <div className="flex gap-2">
                         <button onClick={handleToolboxClick}>
                             {isToolboxMinimized ?
@@ -133,25 +149,26 @@ const Footer: React.FC = () => {
                     allow="camera *; microphone *; autoplay *; hid *"
                     src="https://apps.mypurecloud.com/crm/interaction.html"
                     className="w-full h-full text-xs"
-                    //  style={{
-                    //     width: '100%',
-                    //     height: '100%',
-                    //     border: 'none',
-                    //     borderRadius: '4px',
-                    //     boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)'
-                    //   }}
-                    title="Genesys Softphone"
+                    title="Genesys Toolbox"
                 />
-            </div >
+            </div>
+            
+            {/* Agent Chat Component */}
+            <AgentChat 
+                isOpen={isAgentChatOpen}
+                isMinimized={isAgentChatMinimized}
+                onToggle={handleAgentChatClick}
+                position={getAgentChatPopupStyle()}
+            />
 
             {/* Footer */}
-            < footer className="bg-gray-900 h-[1.5rem] pl-8 text-white fixed bottom-0 w-full" >
+            <footer className="bg-gray-900 h-[1.5rem] pl-8 text-white fixed bottom-0 w-full">
                 <div className="container mx-auto flex justify-between items-center align-center px-4">
                     <div className='flex justify-between items-center px-1'>
                         {/* softphone */}
                         <div className='flex justify-between items-center bg-gray-800 px-1'>
                             <IoMdCall
-                                className={` ${callState.isCallActive ? 'text-green-500 text-xs' : 'text-gray-400 text-xs'}`}
+                                className={`${callState.isCallActive ? 'text-green-500 text-xs' : 'text-gray-400 text-xs'}`}
                             />
                             <button
                                 ref={buttonRef}
@@ -174,15 +191,13 @@ const Footer: React.FC = () => {
                                 </span>
                             </button>
                         </div>
+                        
                         {/* toolbox */}
                         <div className='flex ml-4 justify-between items-center bg-gray-800 px-1'>
-                            {/* <IoMdCall 
-                             className={` ${callState.isCallActive ? 'text-green-500 text-xs' : 'text-gray-400 text-xs'}`} 
-                         /> */}
                             <button
                                 ref={ToolboxbuttonRef}
                                 onClick={handleToolboxClick}
-                                className="flex items-center  gap-2 pl-4 py-1 rounded-md transition-colors"
+                                className="flex items-center gap-2 pl-4 py-1 rounded-md transition-colors"
                             >
                                 <span className={`flex text-[9px]
                              ${isToolboxOpen ?
@@ -200,6 +215,31 @@ const Footer: React.FC = () => {
                                 </span>
                             </button>
                         </div>
+                        
+                        {/* Agent Chat button */}
+                        <div className='flex ml-4 justify-between items-center bg-gray-800 px-1'>
+                            <RiRobot2Line className="text-xs text-blue-400" />
+                            <button
+                                ref={agentChatButtonRef}
+                                onClick={handleAgentChatClick}
+                                className="flex items-center gap-2 pl-4 py-1 rounded-md transition-colors"
+                            >
+                                <span className={`flex text-[9px]
+                             ${isAgentChatOpen ?
+                                        isAgentChatMinimized
+                                            ? 'text-teal-600 text-xs hover:text-teal-700'
+                                            : 'text-green-600 text-xs hover:text-green-700'
+                                        : 'text-yellow-600 hover:text-yellow-700'
+                                    }`}>
+                                    {isAgentChatOpen
+                                        ? isAgentChatMinimized
+                                            ? (<div className='flex text-xs items-center gap-1'><span>Nurse AI Assistant</span> <AiTwotoneUpCircle /></div>)
+                                            : (<div className='flex text-xs items-center gap-1'><span>Nurse AI Assistant</span>< AiTwotoneDownCircle /></div>)
+                                        : 'Nurse AI Assistant'
+                                    }
+                                </span>
+                            </button>
+                        </div>
                     </div>
 
                     <span className={`text-[9px] ${callState.isCallActive ? 'text-green-500' : 'text-gray-400'}`}>
@@ -207,7 +247,7 @@ const Footer: React.FC = () => {
                     </span>
                     <p className="text-[9px] text-gray-400">&copy; {new Date().getFullYear()} P. P.</p>
                 </div>
-            </footer >
+            </footer>
         </>
     );
 };
