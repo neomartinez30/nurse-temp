@@ -5,7 +5,6 @@ import { HiOutlineDocumentReport } from "react-icons/hi";
 import { GrMapLocation } from "react-icons/gr";
 import { MdOutlineNotes } from "react-icons/md";
 
-
 const Sidebar: React.FC = () => {
     const location = useLocation();
     const [isExpanded, setIsExpanded] = useState(false);
@@ -41,22 +40,22 @@ const Sidebar: React.FC = () => {
             </div>
             <div className="flex-1">
                 <ul className="flex flex-col items-center w-full mt-4 space-y-5 px-1.5">
-                    <li className={getLiClassName('/')}>
-                        <Link to="/" className="flex items-center space-x-3 w-full">
-                            <HiOutlineDocumentReport className="h-5 w-5" />
-                            {isExpanded && <span className="text-sm font-medium ml-2">Reports</span>}
-                        </Link>
-                    </li>
                     <li className={getLiClassName('/agent-desktop')}>
                         <Link to="/agent-desktop" className="flex items-center space-x-3 w-full">
                             <RiUserLine className="h-5 w-5" />
-                            {isExpanded && <span className="text-sm font-medium ml-2">Ticket</span>}
+                            {isExpanded && <span className="text-sm font-medium ml-2">Agent Desktop</span>}
+                        </Link>
+                    </li>
+                    <li className={getLiClassName('/clinical-notes')}>
+                        <Link to="/clinical-notes" className="flex items-center space-x-3 w-full">
+                            <MdOutlineNotes className="h-5 w-5" />
+                            {isExpanded && <span className="text-sm font-medium ml-2">Clinical Notes</span>}
                         </Link>
                     </li>
                     <li className={getLiClassName('/data')}>
                         <Link to="/data" className="flex items-center space-x-3 w-full">
                             <GrMapLocation className="h-5 w-5" style={{ filter: isActive('/data') ? 'brightness(0) invert(1)' : 'none' }} />
-                            {isExpanded && <span className="text-sm font-medium ml-2">Provider Location</span>}
+                            {isExpanded && <span className="text-sm font-medium ml-2">Provider Locator</span>}
                         </Link>
                     </li>
                     <li className={getLiClassName('/settings')}>

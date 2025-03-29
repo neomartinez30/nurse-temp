@@ -3,10 +3,9 @@ import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
 import Footer from './components/Footer'
 import { Routes, Route } from 'react-router-dom';
-// import AgentDesktop from './pages/Old_AgentDesktop';
 import Dashboard from './pages/Dashboard';
 import AgentDesk1 from './pages/AgentDesk1';
-import {ProviderLocation} from './pages/ProviderLocation';
+import { ProviderLocation } from './pages/ProviderLocation';
 import ClinicalNotes from './pages/ClinicalNotes';
 
 const MainPage = () => {
@@ -23,8 +22,6 @@ const MainPage = () => {
     };
   }, []);
 
-
-
   return (
     <div className="flex flex-col min-h-screen">
       {/* Fixed Navbar */}
@@ -38,11 +35,11 @@ const MainPage = () => {
         <main className={`flex-1 pt-1 mt-10 ${sidebarExpanded ? 'ml-40' : ''} transition-all h-auto duration-300`}>
           <div className="pt-1 pl-3 mb-[1.5rem]">
             <Routes>
-              {/* <Route path="/agent-desktop" element={<AgentDesktop />} /> */}
               <Route path="/agent-desktop" element={<AgentDesk1 />} />
               <Route path="/clinical-notes" element={<ClinicalNotes />} />
-              <Route path="/" element={<Dashboard />} />
               <Route path="/data" element={<ProviderLocation />} />
+              <Route path="/" element={<AgentDesk1 />} />
+              <Route path="/settings" element={<Dashboard />} />
             </Routes>
           </div>
         </main>

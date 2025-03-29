@@ -100,7 +100,7 @@ const Footer: React.FC = () => {
                  ${!isSoftphoneOpen || isMinimized
                         ? 'opacity-0 pointer-events-none scale-95 translate-y-98'
                         : 'opacity-100 scale-100 translate-y-0'
-                    } bottom-8 left-14 w-70 bg-white rounded-t-lg shadow-lg border border-gray-200`}>
+                    } bottom-12 left-14 w-70 bg-white rounded-t-lg shadow-lg border border-gray-200`}>
                 <div className="flex justify-between items-center p-2 bg-gradient-to-r from-sky-700 to-teal-600 rounded-t-lg">
                     <span className="text-sm font-semibold text-white">Genesys Softphone</span>
                     <div className="flex gap-2">
@@ -132,7 +132,7 @@ const Footer: React.FC = () => {
                  ${!isToolboxOpen || isToolboxMinimized
                         ? 'opacity-0 pointer-events-none scale-95 translate-y-98'
                         : 'opacity-100 scale-100 translate-y-0'
-                    } bottom-8 left-100 w-70 bg-white rounded-t-lg shadow-lg border border-gray-200`}>
+                    } bottom-12 left-100 w-70 bg-white rounded-t-lg shadow-lg border border-gray-200`}>
                 <div className="flex justify-between items-center p-2 bg-gradient-to-r from-sky-700 to-teal-600 rounded-t-lg">
                     <span className="text-sm font-semibold text-white">Genesys Toolbox</span>
                     <div className="flex gap-2">
@@ -161,84 +161,84 @@ const Footer: React.FC = () => {
                 position={getAgentChatPopupStyle()}
             />
 
-            {/* Footer */}
-            <footer className="bg-gradient-to-r from-gray-900 to-gray-800 h-8 fixed bottom-0 w-full shadow-lg z-10">
+            {/* Footer - Increased height from h-8 to h-12 */}
+            <footer className="bg-gradient-to-r from-gray-900 to-gray-800 h-12 fixed bottom-0 w-full shadow-lg z-10">
                 <div className="container mx-auto flex justify-between items-center h-full px-4">
                     <div className='flex space-x-4 items-center h-full'>
-                        {/* Softphone */}
-                        <div className='group relative flex items-center px-3 h-full hover:bg-gray-700 transition-colors duration-200'>
+                        {/* Softphone - Improved visibility */}
+                        <div className='group relative flex items-center px-4 h-full hover:bg-gray-700 transition-colors duration-200'>
                             <IoMdCall
-                                className={`${callState.isCallActive ? 'text-green-400' : 'text-gray-400'} mr-1.5`}
-                                size={14}
+                                className={`${callState.isCallActive ? 'text-green-400' : 'text-gray-200'} mr-2`}
+                                size={18}
                             />
                             <button
                                 ref={buttonRef}
                                 onClick={handleSoftphoneClick}
-                                className="flex items-center gap-1.5"
+                                className="flex items-center gap-2"
                             >
-                                <span className={`text-xs font-medium
+                                <span className={`text-sm font-medium
                                     ${isSoftphoneOpen ?
                                         isMinimized
                                             ? 'text-teal-300'
                                             : 'text-green-300'
-                                        : 'text-gray-300 group-hover:text-white'
+                                        : 'text-gray-200 group-hover:text-white'
                                     } transition-colors`}>
                                     {isSoftphoneOpen
                                         ? isMinimized
-                                            ? (<div className='flex items-center gap-1'><span>Softphone</span> <AiTwotoneUpCircle size={10} /></div>)
-                                            : (<div className='flex items-center gap-1'><span>Softphone</span> <AiTwotoneDownCircle size={10} /></div>)
+                                            ? (<div className='flex items-center gap-1'><span>Softphone</span> <AiTwotoneUpCircle size={12} /></div>)
+                                            : (<div className='flex items-center gap-1'><span>Softphone</span> <AiTwotoneDownCircle size={12} /></div>)
                                         : 'Softphone'
                                     }
                                 </span>
                             </button>
                         </div>
                         
-                        {/* Toolbox */}
-                        <div className='group relative flex items-center px-3 h-full hover:bg-gray-700 transition-colors duration-200'>
+                        {/* Toolbox - Improved visibility */}
+                        <div className='group relative flex items-center px-4 h-full hover:bg-gray-700 transition-colors duration-200'>
                             <button
                                 ref={ToolboxbuttonRef}
                                 onClick={handleToolboxClick}
-                                className="flex items-center gap-1.5"
+                                className="flex items-center gap-2"
                             >
-                                <span className={`text-xs font-medium
+                                <span className={`text-sm font-medium
                                     ${isToolboxOpen ?
                                         isToolboxMinimized
                                             ? 'text-teal-300'
                                             : 'text-green-300'
-                                        : 'text-gray-300 group-hover:text-white'
+                                        : 'text-gray-200 group-hover:text-white'
                                     } transition-colors`}>
                                     {isToolboxOpen
                                         ? isToolboxMinimized
-                                            ? (<div className='flex items-center gap-1'><span>Genesys Toolbox</span> <AiTwotoneUpCircle size={10} /></div>)
-                                            : (<div className='flex items-center gap-1'><span>Genesys Toolbox</span> <AiTwotoneDownCircle size={10} /></div>)
+                                            ? (<div className='flex items-center gap-1'><span>Genesys Toolbox</span> <AiTwotoneUpCircle size={12} /></div>)
+                                            : (<div className='flex items-center gap-1'><span>Genesys Toolbox</span> <AiTwotoneDownCircle size={12} /></div>)
                                         : 'Genesys Toolbox'
                                     }
                                 </span>
                             </button>
                         </div>
                         
-                        {/* Agent Chat button */}
-                        <div className='group relative flex items-center px-3 h-full hover:bg-gray-700 transition-colors duration-200'>
+                        {/* Agent Chat button - Improved visibility */}
+                        <div className='group relative flex items-center px-4 h-full hover:bg-gray-700 transition-colors duration-200'>
                             <RiRobot2Line 
-                                className="text-blue-300 mr-1.5" 
-                                size={14}
+                                className="text-blue-300 mr-2" 
+                                size={18}
                             />
                             <button
                                 ref={agentChatButtonRef}
                                 onClick={handleAgentChatClick}
-                                className="flex items-center gap-1.5"
+                                className="flex items-center gap-2"
                             >
-                                <span className={`text-xs font-medium
+                                <span className={`text-sm font-medium
                                     ${isAgentChatOpen ?
                                         isAgentChatMinimized
                                             ? 'text-teal-300'
                                             : 'text-green-300'
-                                        : 'text-gray-300 group-hover:text-white'
+                                        : 'text-gray-200 group-hover:text-white'
                                     } transition-colors`}>
                                     {isAgentChatOpen
                                         ? isAgentChatMinimized
-                                            ? (<div className='flex items-center gap-1'><span>Nurse AI Assistant</span> <AiTwotoneUpCircle size={10} /></div>)
-                                            : (<div className='flex items-center gap-1'><span>Nurse AI Assistant</span> <AiTwotoneDownCircle size={10} /></div>)
+                                            ? (<div className='flex items-center gap-1'><span>Nurse AI Assistant</span> <AiTwotoneUpCircle size={12} /></div>)
+                                            : (<div className='flex items-center gap-1'><span>Nurse AI Assistant</span> <AiTwotoneDownCircle size={12} /></div>)
                                         : 'Nurse AI Assistant'
                                     }
                                 </span>
@@ -247,10 +247,10 @@ const Footer: React.FC = () => {
                     </div>
 
                     <div className="flex items-center space-x-4">
-                        <span className={`text-xs px-3 py-1 rounded-full ${callState.isCallActive ? 'bg-green-900 text-green-300' : 'bg-gray-700 text-gray-400'}`}>
+                        <span className={`text-sm px-4 py-1.5 rounded-full ${callState.isCallActive ? 'bg-green-900 text-green-300' : 'bg-gray-700 text-gray-300'}`}>
                             {callState.stateOfCall || 'IDLE'}
                         </span>
-                        <p className="text-xs text-gray-400">&copy; {new Date().getFullYear()} P. P.</p>
+                        <p className="text-sm text-gray-300">&copy; {new Date().getFullYear()} P. P.</p>
                     </div>
                 </div>
             </footer>
