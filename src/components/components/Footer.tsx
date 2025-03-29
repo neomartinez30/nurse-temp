@@ -58,7 +58,7 @@ const Footer: React.FC = () => {
         }
     };
 
-    // Calculate position relative to Softphone button
+    // Calculate position for softphone
     const getPopupStyle = () => {
         if (!buttonRef.current) return {};
         const buttonRect = buttonRef.current.getBoundingClientRect();
@@ -68,26 +68,19 @@ const Footer: React.FC = () => {
         };
     };
 
-    // Calculate position for toolbox
+    // Calculate position for toolbox - position it in the middle
     const getToolboxPopupStyle = () => {
-        if (!ToolboxbuttonRef.current || !buttonRef.current) return {};
-        const toolboxButtonRect = ToolboxbuttonRef.current.getBoundingClientRect();
-        const softphoneButtonRect = buttonRef.current.getBoundingClientRect();
-
         return {
-            bottom: `calc(100vh - ${toolboxButtonRect.top}px + 50px)`,
-            left: `${softphoneButtonRect.right + 10}px`,
+            bottom: 48, // Just above the footer
+            left: 'calc(50% - 200px)', // Center horizontally (400px width / 2)
         };
     };
     
-    // Calculate position for agent chat
+    // Calculate position for agent chat - position it to the right
     const getAgentChatPopupStyle = () => {
-        if (!agentChatButtonRef.current) return {};
-        const agentChatButtonRect = agentChatButtonRef.current.getBoundingClientRect();
-        
         return {
-            bottom: `calc(100vh - ${agentChatButtonRect.top}px)`,
-            left: `${agentChatButtonRect.left - 300}px`, // Position more to the left
+            bottom: 48, // Just above the footer
+            right: 20, // Position from the right edge
         };
     };
 
@@ -96,11 +89,11 @@ const Footer: React.FC = () => {
             {/* Softphone Container */}
             <div
                 style={getPopupStyle()}
-                className={`fixed transition-all duration-300 ease-in-out 
+                className={`fixed transition-all duration-300 ease-in-out z-20
                  ${!isSoftphoneOpen || isMinimized
                         ? 'opacity-0 pointer-events-none scale-95 translate-y-98'
                         : 'opacity-100 scale-100 translate-y-0'
-                    } bottom-12 left-14 w-70 bg-white rounded-t-lg shadow-lg border border-gray-200`}>
+                    } bottom-12 w-70 bg-white rounded-t-lg shadow-lg border border-gray-200`}>
                 <div className="flex justify-between items-center p-2 bg-gradient-to-r from-sky-700 to-teal-600 rounded-t-lg">
                     <span className="text-sm font-semibold text-white">Genesys Softphone</span>
                     <div className="flex gap-2">
@@ -128,11 +121,11 @@ const Footer: React.FC = () => {
                     width: '400px',
                     height: '450px',
                 }}
-                className={`fixed transition-all duration-300 ease-in-out 
+                className={`fixed transition-all duration-300 ease-in-out z-20
                  ${!isToolboxOpen || isToolboxMinimized
                         ? 'opacity-0 pointer-events-none scale-95 translate-y-98'
                         : 'opacity-100 scale-100 translate-y-0'
-                    } bottom-12 left-100 w-70 bg-white rounded-t-lg shadow-lg border border-gray-200`}>
+                    } bg-white rounded-t-lg shadow-lg border border-gray-200`}>
                 <div className="flex justify-between items-center p-2 bg-gradient-to-r from-sky-700 to-teal-600 rounded-t-lg">
                     <span className="text-sm font-semibold text-white">Genesys Toolbox</span>
                     <div className="flex gap-2">
