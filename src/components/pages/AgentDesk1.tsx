@@ -173,9 +173,9 @@ const AgentDesk1: React.FC = () => {
       <div className="flex flex-1">
         {/* Main Content */}
         <main className="flex-1 p-4">
-          {/* Patient Information */}
+          {/* Patient Information - REDUCED HEIGHT */}
           <div className="m-0">
-            <div className="flex ml-4 mb-6 h-auto shadow-md rounded-lg overflow-hidden">
+            <div className="flex ml-4 mb-4 h-auto shadow-md rounded-lg overflow-hidden">
               <div className="w-2/5 bg-white">
                 <div className="flex justify-between bg-gray-100 border-gray-300 border-b">
                   <div className="text-xs font-semibold items-center justify-center py-2 px-3 text-blue-700 flex">
@@ -190,7 +190,7 @@ const AgentDesk1: React.FC = () => {
                   <div className="text-xs font-semibold py-2 px-3 text-gray-700">{callerData1?.TicketCreatedAt || '--'}</div>
                 </div>
 
-                <div className="flex bg-gradient-to-r justify-between from-sky-700 to-teal-600 px-4 py-6 items-center mb-2">
+                <div className="flex bg-gradient-to-r justify-between from-sky-700 to-teal-600 px-4 py-4 items-center">
                   <div className="flex items-center">
                     <div className="bg-gray-200 w-12 h-12 rounded-full flex items-center justify-center shadow-md">
                       <span className="text-gray-700 font-semibold">JD</span>
@@ -213,43 +213,46 @@ const AgentDesk1: React.FC = () => {
                   </div>
                 </div>
 
-                <div className='p-4'>
+                <div className='p-3'>
                   <div className='flex justify-between mb-2'>
-                    <h3 className="text-sm font-semibold text-gray-700">Customer Information</h3>
-                    <div className='flex flex-row justify-between items-center px-2'>
-                      <div className="relative border ml-3 w-50 justify-between items-center rounded flex mb-1">
-                        <input
-                          type="text"
-                          placeholder="Search family members..."
-                          value={searchTerm}
-                          onChange={(e) => handleSearch(e.target.value)}
-                          className='w-full text-xs rounded-md px-4 py-2 border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50'
-                        />
-                        {searchResults.length > 0 && searchTerm && (
-                          <div className='absolute z-10 w-full mt-1 top-full bg-white border border-gray-200 rounded-md shadow-lg'>
-                            {searchResults.map(member => (
-                              <button
-                                key={member.id}
-                                onClick={() => {
-                                  setSelectedMember(member);
-                                  setSearchTerm('');
-                                }}
-                                className='w-full text-left px-4 py-2 text-xs hover:bg-gray-50 border-b border-gray-100 last:border-b-0'
-                              >
-                                <div className='font-medium'>{member.name}</div>
-                                <div className='text-gray-500 text-xs'>
-                                  {member.relationship} • #{member.accountNumber}
-                                </div>
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </div>
+                    <h3 className="text-sm font-semibold text-gray-700 bg-gray-100 py-1 px-3 rounded-md shadow-sm">CUSTOMER INFORMATION</h3>
+                    <button className="bg-teal-600 hover:bg-teal-700 text-white text-xs px-3 py-1 rounded shadow transition-colors">
+                      Save to Ticket
+                    </button>
+                  </div>
+                  <div className='flex justify-between items-center px-2 mb-2'>
+                    <div className="relative border w-full justify-between items-center rounded flex">
+                      <input
+                        type="text"
+                        placeholder="Search family members..."
+                        value={searchTerm}
+                        onChange={(e) => handleSearch(e.target.value)}
+                        className='w-full text-xs rounded-md px-4 py-2 border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50'
+                      />
+                      {searchResults.length > 0 && searchTerm && (
+                        <div className='absolute z-10 w-full mt-1 top-full bg-white border border-gray-200 rounded-md shadow-lg'>
+                          {searchResults.map(member => (
+                            <button
+                              key={member.id}
+                              onClick={() => {
+                                setSelectedMember(member);
+                                setSearchTerm('');
+                              }}
+                              className='w-full text-left px-4 py-2 text-xs hover:bg-gray-50 border-b border-gray-100 last:border-b-0'
+                            >
+                              <div className='font-medium'>{member.name}</div>
+                              <div className='text-gray-500 text-xs'>
+                                {member.relationship} • #{member.accountNumber}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
-                  <div className='flex justify-between bg-gray-50 p-4 rounded-lg shadow-sm'>
+                  <div className='flex justify-between bg-gray-50 p-3 rounded-lg shadow-sm'>
                     {selectedMember ? (
-                      <div className="flex flex-col w-1/2 space-y-2">
+                      <div className="flex flex-col w-1/2 space-y-1">
                         <div className="flex flex-row text-xs">
                           <p className="font-semibold w-28">Patient Name:</p>
                           <p className='px-1 text-gray-700'>{selectedMember.name}</p>
@@ -310,16 +313,16 @@ const AgentDesk1: React.FC = () => {
               </div>
 
               <div className="w-3/5 bg-white ml-0.25 pl-2 border-gray-300 border-t">
-                <div className="border-b border-gray-300 mb-3">
+                <div className="border-b border-gray-300">
                   <nav className="flex">
                     <button
-                      className={`py-3 px-4 text-sm font-medium transition-colors ${activeTab === 'DEERS' ? 'text-teal-700 border-b-2 border-teal-600' : 'text-gray-600 hover:text-gray-800'}`}
+                      className={`py-2 px-4 text-sm font-medium transition-colors ${activeTab === 'DEERS' ? 'text-teal-700 border-b-2 border-teal-600' : 'text-gray-600 hover:text-gray-800'}`}
                       onClick={() => setActiveTab('DEERS')}
                     >
                       DEERS
                     </button>
                     <button
-                      className={`py-3 px-4 text-sm font-medium transition-colors ${activeTab === 'MedicalHistory' ? 'text-teal-700 border-b-2 border-teal-600' : 'text-gray-600 hover:text-gray-800'}`}
+                      className={`py-2 px-4 text-sm font-medium transition-colors ${activeTab === 'MedicalHistory' ? 'text-teal-700 border-b-2 border-teal-600' : 'text-gray-600 hover:text-gray-800'}`}
                       onClick={() => setActiveTab('MedicalHistory')}
                     >
                       Medical History
@@ -327,10 +330,10 @@ const AgentDesk1: React.FC = () => {
                   </nav>
                 </div>
 
-                {/* DEERS Tab Content */}
+                {/* DEERS Tab Content - REDUCED HEIGHT */}
                 {activeTab === 'DEERS' && (
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-4 gap-6 p-4">
+                  <div className="space-y-2">
+                    <div className="grid grid-cols-4 gap-4 p-3">
                       <div className="text-xs">
                         <p className="font-semibold text-gray-700 mb-1">Primary</p>
                         <p className="text-gray-600 bg-gray-50 p-2 rounded">John Doe</p>
@@ -398,18 +401,13 @@ const AgentDesk1: React.FC = () => {
                         <p className="text-gray-600 bg-gray-50 p-2 rounded">Virginia</p>
                       </div>
                     </div>
-                    <div className="flex justify-end px-4 mb-2">
-                      <button className="bg-teal-600 hover:bg-teal-700 text-white text-xs px-6 py-2 rounded shadow transition-colors">
-                        Save to Ticket
-                      </button>
-                    </div>
                   </div>
                 )}
 
-                {/* Medical History Tab Content */}
+                {/* Medical History Tab Content - REDUCED HEIGHT */}
                 {activeTab === 'MedicalHistory' && (
-                  <div className="space-y-6 p-4">
-                    <div className="bg-white rounded-md p-4 shadow-sm border border-gray-100">
+                  <div className="space-y-4 p-3">
+                    <div className="bg-white rounded-md p-3 shadow-sm border border-gray-100">
                       <p className="font-semibold text-gray-700 mb-2 text-sm">Active Conditions</p>
                       <ul className="list-disc list-inside text-gray-600 space-y-2 text-xs">
                         <li className="p-2 bg-gray-50 rounded">
@@ -426,12 +424,6 @@ const AgentDesk1: React.FC = () => {
                         </li>
                       </ul>
                     </div>
-                    <div className="bg-white rounded-md p-4 shadow-sm border border-gray-100">
-                      <p className="font-semibold text-gray-700 mb-2 text-sm">Other Conditions</p>
-                      <ul className="list-disc list-inside text-gray-600 space-y-2 text-xs">
-                        <li className="p-2 bg-gray-50 rounded">Facial laceration - Resolved (2020)</li>
-                      </ul>
-                    </div>
                   </div>
                 )}
               </div>
@@ -439,13 +431,13 @@ const AgentDesk1: React.FC = () => {
           </div>
 
           {/* Middle Section */}
-          <section className="flex h-auto ml-4 mb-6 space-x-4">
+          <section className="flex h-auto ml-4 mb-4 space-x-4">
             {/* Left Side - Case, Medical, CareC, Record section */}
             <div className='flex-col w-4/7'>
               {/* Case Information */}
               <div className='bg-white rounded-lg shadow-md p-4 mb-4'>
                 <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-lg font-bold text-gray-800">Case Information</h3>
+                  <h3 className="text-lg font-bold text-gray-700 bg-gray-100 py-1 px-4 rounded-md shadow-sm">CASE INFORMATION</h3>
                   <div className="flex bg-gray-50 rounded-md shadow-sm">
                     <button className="py-2 px-3 text-xs font-medium text-gray-700 hover:text-teal-700 hover:bg-gray-100 rounded-l-md transition-colors">Split</button>
                     <button className="py-2 px-3 text-xs font-medium text-gray-700 hover:text-teal-700 hover:bg-gray-100 transition-colors">Clones</button>
@@ -519,7 +511,7 @@ const AgentDesk1: React.FC = () => {
 
               {/* Case Data Section */}
               <section className="bg-white rounded-lg shadow-md p-4 mb-4">
-                <h3 className="text-lg font-bold text-gray-800 mb-4">Case Data</h3>
+                <h3 className="text-lg font-bold text-gray-700 bg-gray-100 py-1 px-4 rounded-md shadow-sm mb-4">CASE DATA</h3>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                   {/* Categorization */}
                   <div className="text-xs">
@@ -582,8 +574,8 @@ const AgentDesk1: React.FC = () => {
 
             {/* Nurse's Toolkit */}
             <div className="w-3/7 mb-4 bg-white flex flex-col rounded-lg shadow-md h-auto">
-              <div className="flex-col p-4 border-b border-gray-200">
-                <h3 className="text-lg font-bold text-gray-800">Nurse's Toolkit</h3>
+              <div className="flex-col p-3 border-b border-gray-200 bg-gray-100">
+                <h3 className="text-lg font-bold text-gray-700">NURSE'S TOOLKIT</h3>
               </div>
               <div className="flex-grow p-1">
                 <iframe
@@ -605,8 +597,8 @@ const AgentDesk1: React.FC = () => {
             <div className='flex'>
               <div className='flex-col mr-4 w-4/7'>
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-bold text-gray-800 cursor-pointer flex items-center" onClick={toggleMedicalNotes}>
-                    Medical Notes
+                  <h3 className="text-lg font-bold text-gray-700 bg-gray-100 py-1 px-4 rounded-md shadow-sm cursor-pointer flex items-center" onClick={toggleMedicalNotes}>
+                    MEDICAL NOTES
                     {isMedicalNotesCollapsed ? <ImCircleDown className="ml-2" /> : <ImCircleUp className="ml-2" />}
                   </h3>
                   <button className="py-2 px-4 text-xs bg-teal-600 hover:bg-teal-700 text-white rounded shadow transition-colors">
@@ -679,8 +671,8 @@ const AgentDesk1: React.FC = () => {
           {/* Care Coordinator Notes*/}
           <section className="bg-white rounded-lg shadow-md p-4 ml-4 mb-6">
             <div className="flex justify-between items-center mb-3">
-              <h3 className="text-lg font-bold text-gray-800 cursor-pointer flex items-center" onClick={toggleCCicalNotes}>
-                Care-Coordinator Notes
+              <h3 className="text-lg font-bold text-gray-700 bg-gray-100 py-1 px-4 rounded-md shadow-sm cursor-pointer flex items-center" onClick={toggleCCicalNotes}>
+                CARE-COORDINATOR NOTES
                 {!isCareCoNotesCollapsed ? <ImCircleDown className="ml-2" /> : <ImCircleUp className="ml-2" />}
               </h3>
             </div>
@@ -700,8 +692,8 @@ const AgentDesk1: React.FC = () => {
           {/* Contact records and Files */}
           <section className="bg-white rounded-lg shadow-md p-4 ml-4 mb-6">
             <div className="flex justify-between items-center mb-3">
-              <h3 className="text-lg font-bold text-gray-800 cursor-pointer flex items-center" onClick={toggleCRMedicalNotes}>
-                Contact Records & Files
+              <h3 className="text-lg font-bold text-gray-700 bg-gray-100 py-1 px-4 rounded-md shadow-sm cursor-pointer flex items-center" onClick={toggleCRMedicalNotes}>
+                CONTACT RECORDS & FILES
                 {!isContactRecNotesCollapsed ? <ImCircleDown className="ml-2" /> : <ImCircleUp className="ml-2" />}
               </h3>
             </div>
