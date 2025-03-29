@@ -101,10 +101,10 @@ const Footer: React.FC = () => {
                         ? 'opacity-0 pointer-events-none scale-95 translate-y-98'
                         : 'opacity-100 scale-100 translate-y-0'
                     } bottom-8 left-14 w-70 bg-white rounded-t-lg shadow-lg border border-gray-200`}>
-                <div className="flex justify-between items-center p-2 bg-gray-400 rounded-t-lg">
-                    <span className="text-sm font-semibold ">Genesys Softphone</span>
+                <div className="flex justify-between items-center p-2 bg-gradient-to-r from-sky-700 to-teal-600 rounded-t-lg">
+                    <span className="text-sm font-semibold text-white">Genesys Softphone</span>
                     <div className="flex gap-2">
-                        <button onClick={handleSoftphoneClick}>
+                        <button onClick={handleSoftphoneClick} className="text-white hover:text-gray-100 transition-colors">
                             {isMinimized ?
                                 <AiOutlineExpandAlt className="w-4 h-4" /> :
                                 <AiOutlineMinusCircle className="w-4 h-4" />
@@ -133,10 +133,10 @@ const Footer: React.FC = () => {
                         ? 'opacity-0 pointer-events-none scale-95 translate-y-98'
                         : 'opacity-100 scale-100 translate-y-0'
                     } bottom-8 left-100 w-70 bg-white rounded-t-lg shadow-lg border border-gray-200`}>
-                <div className="flex justify-between items-center p-2 bg-gray-400 rounded-t-lg">
-                    <span className="text-sm font-semibold">Genesys Toolbox</span>
+                <div className="flex justify-between items-center p-2 bg-gradient-to-r from-sky-700 to-teal-600 rounded-t-lg">
+                    <span className="text-sm font-semibold text-white">Genesys Toolbox</span>
                     <div className="flex gap-2">
-                        <button onClick={handleToolboxClick}>
+                        <button onClick={handleToolboxClick} className="text-white hover:text-gray-100 transition-colors">
                             {isToolboxMinimized ?
                                 <AiOutlineExpandAlt className="w-4 h-4" /> :
                                 <AiOutlineMinusCircle className="w-4 h-4" />
@@ -162,54 +162,55 @@ const Footer: React.FC = () => {
             />
 
             {/* Footer */}
-            <footer className="bg-gray-900 h-[1.5rem] pl-8 text-white fixed bottom-0 w-full">
-                <div className="container mx-auto flex justify-between items-center align-center px-4">
-                    <div className='flex justify-between items-center px-1'>
-                        {/* softphone */}
-                        <div className='flex justify-between items-center bg-gray-800 px-1'>
+            <footer className="bg-gradient-to-r from-gray-900 to-gray-800 h-8 fixed bottom-0 w-full shadow-lg z-10">
+                <div className="container mx-auto flex justify-between items-center h-full px-4">
+                    <div className='flex space-x-4 items-center h-full'>
+                        {/* Softphone */}
+                        <div className='group relative flex items-center px-3 h-full hover:bg-gray-700 transition-colors duration-200'>
                             <IoMdCall
-                                className={`${callState.isCallActive ? 'text-green-500 text-xs' : 'text-gray-400 text-xs'}`}
+                                className={`${callState.isCallActive ? 'text-green-400' : 'text-gray-400'} mr-1.5`}
+                                size={14}
                             />
                             <button
                                 ref={buttonRef}
                                 onClick={handleSoftphoneClick}
-                                className="flex items-center gap-2 pl-4 py-1 rounded-md transition-colors"
+                                className="flex items-center gap-1.5"
                             >
-                                <span className={`flex text-[9px]
-                             ${isSoftphoneOpen ?
+                                <span className={`text-xs font-medium
+                                    ${isSoftphoneOpen ?
                                         isMinimized
-                                            ? 'text-teal-600 text-xs hover:text-teal-700'
-                                            : 'text-green-600 text-xs hover:text-green-700'
-                                        : 'text-yellow-600 hover:text-yellow-700'
-                                    }`}>
+                                            ? 'text-teal-300'
+                                            : 'text-green-300'
+                                        : 'text-gray-300 group-hover:text-white'
+                                    } transition-colors`}>
                                     {isSoftphoneOpen
                                         ? isMinimized
-                                            ? (<div className='flex text-xs items-center gap-1'><span>Softphone</span> <AiTwotoneUpCircle /></div>)
-                                            : (<div className='flex text-xs items-center gap-1'><span>Softphone</span>< AiTwotoneDownCircle /></div>)
+                                            ? (<div className='flex items-center gap-1'><span>Softphone</span> <AiTwotoneUpCircle size={10} /></div>)
+                                            : (<div className='flex items-center gap-1'><span>Softphone</span> <AiTwotoneDownCircle size={10} /></div>)
                                         : 'Softphone'
                                     }
                                 </span>
                             </button>
                         </div>
                         
-                        {/* toolbox */}
-                        <div className='flex ml-4 justify-between items-center bg-gray-800 px-1'>
+                        {/* Toolbox */}
+                        <div className='group relative flex items-center px-3 h-full hover:bg-gray-700 transition-colors duration-200'>
                             <button
                                 ref={ToolboxbuttonRef}
                                 onClick={handleToolboxClick}
-                                className="flex items-center gap-2 pl-4 py-1 rounded-md transition-colors"
+                                className="flex items-center gap-1.5"
                             >
-                                <span className={`flex text-[9px]
-                             ${isToolboxOpen ?
+                                <span className={`text-xs font-medium
+                                    ${isToolboxOpen ?
                                         isToolboxMinimized
-                                            ? 'text-teal-600 text-xs hover:text-teal-700'
-                                            : 'text-green-600 text-xs hover:text-green-700'
-                                        : 'text-yellow-600 hover:text-yellow-700'
-                                    }`}>
+                                            ? 'text-teal-300'
+                                            : 'text-green-300'
+                                        : 'text-gray-300 group-hover:text-white'
+                                    } transition-colors`}>
                                     {isToolboxOpen
                                         ? isToolboxMinimized
-                                            ? (<div className='flex text-xs items-center gap-1'><span>Genesys Toolbox</span> <AiTwotoneUpCircle /></div>)
-                                            : (<div className='flex text-xs items-center gap-1'><span>Genesys Toolbox</span>< AiTwotoneDownCircle /></div>)
+                                            ? (<div className='flex items-center gap-1'><span>Genesys Toolbox</span> <AiTwotoneUpCircle size={10} /></div>)
+                                            : (<div className='flex items-center gap-1'><span>Genesys Toolbox</span> <AiTwotoneDownCircle size={10} /></div>)
                                         : 'Genesys Toolbox'
                                     }
                                 </span>
@@ -217,24 +218,27 @@ const Footer: React.FC = () => {
                         </div>
                         
                         {/* Agent Chat button */}
-                        <div className='flex ml-4 justify-between items-center bg-gray-800 px-1'>
-                            <RiRobot2Line className="text-xs text-blue-400" />
+                        <div className='group relative flex items-center px-3 h-full hover:bg-gray-700 transition-colors duration-200'>
+                            <RiRobot2Line 
+                                className="text-blue-300 mr-1.5" 
+                                size={14}
+                            />
                             <button
                                 ref={agentChatButtonRef}
                                 onClick={handleAgentChatClick}
-                                className="flex items-center gap-2 pl-4 py-1 rounded-md transition-colors"
+                                className="flex items-center gap-1.5"
                             >
-                                <span className={`flex text-[9px]
-                             ${isAgentChatOpen ?
+                                <span className={`text-xs font-medium
+                                    ${isAgentChatOpen ?
                                         isAgentChatMinimized
-                                            ? 'text-teal-600 text-xs hover:text-teal-700'
-                                            : 'text-green-600 text-xs hover:text-green-700'
-                                        : 'text-yellow-600 hover:text-yellow-700'
-                                    }`}>
+                                            ? 'text-teal-300'
+                                            : 'text-green-300'
+                                        : 'text-gray-300 group-hover:text-white'
+                                    } transition-colors`}>
                                     {isAgentChatOpen
                                         ? isAgentChatMinimized
-                                            ? (<div className='flex text-xs items-center gap-1'><span>Nurse AI Assistant</span> <AiTwotoneUpCircle /></div>)
-                                            : (<div className='flex text-xs items-center gap-1'><span>Nurse AI Assistant</span>< AiTwotoneDownCircle /></div>)
+                                            ? (<div className='flex items-center gap-1'><span>Nurse AI Assistant</span> <AiTwotoneUpCircle size={10} /></div>)
+                                            : (<div className='flex items-center gap-1'><span>Nurse AI Assistant</span> <AiTwotoneDownCircle size={10} /></div>)
                                         : 'Nurse AI Assistant'
                                     }
                                 </span>
@@ -242,10 +246,12 @@ const Footer: React.FC = () => {
                         </div>
                     </div>
 
-                    <span className={`text-[9px] ${callState.isCallActive ? 'text-green-500' : 'text-gray-400'}`}>
-                        {callState.stateOfCall || 'IDLE'}
-                    </span>
-                    <p className="text-[9px] text-gray-400">&copy; {new Date().getFullYear()} P. P.</p>
+                    <div className="flex items-center space-x-4">
+                        <span className={`text-xs px-3 py-1 rounded-full ${callState.isCallActive ? 'bg-green-900 text-green-300' : 'bg-gray-700 text-gray-400'}`}>
+                            {callState.stateOfCall || 'IDLE'}
+                        </span>
+                        <p className="text-xs text-gray-400">&copy; {new Date().getFullYear()} P. P.</p>
+                    </div>
                 </div>
             </footer>
         </>

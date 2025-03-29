@@ -7,6 +7,7 @@ import { Routes, Route } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import AgentDesk1 from './pages/AgentDesk1';
 import {ProviderLocation} from './pages/ProviderLocation';
+import ClinicalNotes from './pages/ClinicalNotes';
 
 const MainPage = () => {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
@@ -39,6 +40,7 @@ const MainPage = () => {
             <Routes>
               {/* <Route path="/agent-desktop" element={<AgentDesktop />} /> */}
               <Route path="/agent-desktop" element={<AgentDesk1 />} />
+              <Route path="/clinical-notes" element={<ClinicalNotes />} />
               <Route path="/" element={<Dashboard />} />
               <Route path="/data" element={<ProviderLocation />} />
             </Routes>

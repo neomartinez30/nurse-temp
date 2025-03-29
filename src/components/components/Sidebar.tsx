@@ -3,6 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { RiUserLine, RiSettings4Line, RiMenuFoldLine, RiMenuUnfoldLine } from 'react-icons/ri';
 import { HiOutlineDocumentReport } from "react-icons/hi";
 import { GrMapLocation } from "react-icons/gr";
+import { MdOutlineNotes } from "react-icons/md";
+
 
 const Sidebar: React.FC = () => {
     const location = useLocation();
