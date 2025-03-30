@@ -1,4 +1,4 @@
-import axios from 'axios';
+
 
 // Define the base URL for the AI agent service
 const API_BASE_URL = 'https://your-backend-url.com/api'; // Replace with your actual backend URL

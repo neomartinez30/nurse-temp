@@ -230,7 +230,7 @@ const AgentChat: React.FC<AgentChatProps> = ({ isOpen, isMinimized, onToggle, po
       // Remove typing indicator
       setMessages(prev => prev.filter(msg => msg.content !== '...'));
       
-      const { columns, rows, message } = response.data;
+      const { rows, message } = response.data;
       
       // Add agent response with query results
       addAgentMessage({
@@ -309,11 +309,11 @@ const AgentChat: React.FC<AgentChatProps> = ({ isOpen, isMinimized, onToggle, po
               <tbody className="bg-white divide-y divide-gray-200">
                 {message.data.map((row, rowIndex) => (
                   <tr key={rowIndex}>
-                    {Object.entries(row).map(([key, value], cellIndex) => (
-                      <td key={cellIndex} className="px-3 py-2 whitespace-nowrap text-xs text-gray-500">
-                        {String(value)}
-                      </td>
-                    ))}
+                  {Object.entries(row).map(([_, value], cellIndex) => (
+                  <td key={cellIndex} className="px-3 py-2 whitespace-nowrap text-xs text-gray-500">
+                  {String(value)}
+                   </td>
+          ))}
                   </tr>
                 ))}
               </tbody>
@@ -404,8 +404,9 @@ const AgentChat: React.FC<AgentChatProps> = ({ isOpen, isMinimized, onToggle, po
         </div>
       </div>
       
-      {/* Add some CSS for the typing indicator */}
-      <style jsx>{`
+{/* Add some CSS for the typing indicator */}
+<style>
+        {`
         .typing-indicator {
           display: flex;
           align-items: center;
@@ -430,7 +431,8 @@ const AgentChat: React.FC<AgentChatProps> = ({ isOpen, isMinimized, onToggle, po
           0%, 80%, 100% { transform: translateY(0); }
           40% { transform: translateY(-8px); }
         }
-      `}</style>
+        `}
+      </style>
     </div>
   );
 };

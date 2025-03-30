@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { IoMdCopy, IoMdArrowRoundForward } from 'react-icons/io';
 import { AiOutlineCalendar, AiOutlinePhone, AiOutlineEnvironment } from 'react-icons/ai';
 import { BsHospital, BsPersonBadge, BsTranslate } from 'react-icons/bs';

@@ -1,5 +1,5 @@
 // filepath: src/store/slices/callSlice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { CallerDataTable } from './types';
 
 const initialState: CallerDataTable = {

@@ -18,7 +18,7 @@ export interface CallerDataTable {
     AccountNumber: string | null;
     DOD_ID: string | null;
     FamilyMembers: any[];
-    TickerNumber: string | null;
+    TicketNumber: string | null; // Changed from TickerNumber to TicketNumber
     TicketStatus: string | null;
     TicketOwner: string | null;
     TicketCreatedAt: string | null;

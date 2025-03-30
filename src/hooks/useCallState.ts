@@ -117,12 +117,32 @@ const useCallState = () => {
                     TicketCreatedAt: formattedDate
                 }));
 
-                // Send attributes to Genesys
-                updateGenesysAttributes(interactionId, ticketNumber, currentState.database?.Name);
+  
+        const updateGenesysAttributes = (interactionId: string, ticketNumber: string, customerName: string = 'Unknown') => {
+            try {
+              const softphoneIframe = document.getElementById("softphone") as HTMLIFrameElement;
+              if (softphoneIframe?.contentWindow) {
+                console.log('Sending attributes to Genesys:', {
+                  interactionId,
+                  ticketNumber,
+                  customerName
+                });
+          
+                softphoneIframe.contentWindow.postMessage(JSON.stringify({
+                  type: 'addAttribute',
+                  data: {
+                    interactionId,
+                    attributes: {
+                      TicketNumber: ticketNumber,
+                      CustomerName: customerName || 'Unknown' // Ensure customerName is never null
+                    }
+                  }
+                }), "*");
+              }
+            } catch (error) {
+              console.error('Error sending attributes to Genesys:', error);
             }
-
-            navigate('/agent-desktop');
-        };
+          };
 
         const handleDisconnectedState = async (message: any, interactionId: string) => {
             if (message.data.category === "acw") {
@@ -158,32 +178,6 @@ const useCallState = () => {
                 } catch (error) {
                     console.error('Error updating caller attributes:', error);
                 }
-            }
-        };
-
-        const updateGenesysAttributes = (interactionId: string, ticketNumber: string, customerName: string = 'Unknown') => {
-            try {
-                const softphoneIframe = document.getElementById("softphone") as HTMLIFrameElement;
-                if (softphoneIframe?.contentWindow) {
-                    console.log('Sending attributes to Genesys:', {
-                        interactionId,
-                        ticketNumber,
-                        customerName
-                    });
-
-                    softphoneIframe.contentWindow.postMessage(JSON.stringify({
-                        type: 'addAttribute',
-                        data: {
-                            interactionId,
-                            attributes: {
-                                TicketNumber: ticketNumber,
-                                CustomerName: customerName
-                            }
-                        }
-                    }), "*");
-                }
-            } catch (error) {
-                console.error('Error sending attributes to Genesys:', error);
             }
         };
 
