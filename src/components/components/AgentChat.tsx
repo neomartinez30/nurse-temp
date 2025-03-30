@@ -324,8 +324,6 @@ const AgentChat: React.FC<AgentChatProps> = ({ isOpen, isMinimized, onToggle, po
     );
   };
 
-  // Removed demo button as requested
-
   return (
     <div
       style={{

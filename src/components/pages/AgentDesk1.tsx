@@ -517,7 +517,6 @@ const AgentDesk1: React.FC = () => {
                   <div className="text-xs">
                     <p className="font-semibold text-gray-700 mb-2">Categorization</p>
                     <div className="flex flex-col space-y-2">
-                      <p className="text-gray-700 bg-gray-50 px-3 py-2 rounded shadow-sm">Yes</p>
                       <select className="block w-full px-3 py-2 text-xs border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent rounded shadow-sm">
                         <option className='text-xs'>Asymptomatic</option>
                         <option className='text-xs'>Symptomatic</option>
@@ -529,10 +528,9 @@ const AgentDesk1: React.FC = () => {
                   <div className="text-xs">
                     <p className="font-semibold text-gray-700 mb-2">Travelling</p>
                     <div className="flex flex-col space-y-2">
-                      <p className="text-gray-700 bg-gray-50 px-3 py-2 rounded shadow-sm">No</p>
                       <select className="block w-full px-3 py-2 text-xs border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent rounded shadow-sm">
-                        <option className='text-xs'>Option 1</option>
-                        <option className='text-xs'>Option 2</option>
+                        <option className='text-xs'>Yes</option>
+                        <option className='text-xs'>No</option>
                       </select>
                     </div>
                   </div>
@@ -541,10 +539,9 @@ const AgentDesk1: React.FC = () => {
                   <div className="text-xs">
                     <p className="font-semibold text-gray-700 mb-2">Active Duty</p>
                     <div className="flex flex-col space-y-2">
-                      <p className="text-gray-700 bg-gray-50 px-3 py-2 rounded shadow-sm">Yes</p>
                       <select className="block w-full px-3 py-2 text-xs border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent rounded shadow-sm">
-                        <option className='text-xs'>Option 1</option>
-                        <option className='text-xs'>Option 2</option>
+                        <option className='text-xs'>Yes</option>
+                        <option className='text-xs'>No</option>
                       </select>
                     </div>
                   </div>
@@ -562,8 +559,9 @@ const AgentDesk1: React.FC = () => {
                   <div className="text-xs mt-4">
                     <p className="font-semibold text-gray-700 mb-2">High Risk</p>
                     <select className="block w-full px-3 py-2 text-xs border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent rounded shadow-sm">
-                      <option className='text-xs'>Option 1</option>
-                      <option className='text-xs'>Option 2</option>
+                      <option className='text-xs'>Critical</option>
+                      <option className='text-xs'>Moderate</option>
+                      <option className='text-xs'>Normal</option>
                     </select>
                   </div>
                 </div>

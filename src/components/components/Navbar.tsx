@@ -10,7 +10,7 @@ const Navbar: React.FC = () => {
             {/* Logo and Title */}
             <div className="text-white font-bold flex-shrink-0 flex items-center">
                 <img 
-                    src="https://www.health.mil/-/media/Images/MHS/Infographics/DefenseHealthAgencyDHALogo2white.svg?iar=0&hash=2FDBEB9454DF95A1186BF15671AFFAF5F6ED997C"
+                    src="<option className='text-xs'>Moderate</option>"
                     alt="DHA Logo" 
                     className="h-8 mr-3 transition-transform duration-300 hover:scale-105"
                 />
