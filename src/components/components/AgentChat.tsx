@@ -30,8 +30,8 @@ const AgentChat: React.FC<AgentChatProps> = ({ isOpen, isMinimized, onToggle, po
   const [pendingSqlQuery, setPendingSqlQuery] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
-  // API endpoint from API Gateway
-  const API_ENDPOINT = 'https://ps10dpwkh0.execute-api.us-east-1.amazonaws.com/dev1/';
+  // Replace with your deployed API Gateway URL
+  const API_ENDPOINT = 'https://mced872dm6.execute-api.us-east-1.amazonaws.com/dev';
 
   useEffect(() => {
     // Scroll to bottom when messages change
@@ -44,7 +44,7 @@ const AgentChat: React.FC<AgentChatProps> = ({ isOpen, isMinimized, onToggle, po
       setMessages([
         {
           id: 'welcome',
-          content: "Hello, I'm your NURSE Assistant. I can help with healthcare database queries and medication information. How can I assist you today?",
+          content: "Hello, I'm your AI Assistant. I can help you find patient information quickly and provide FDA published medication information. How can I assist you today?",
           sender: 'agent',
           timestamp: new Date(),
           type: 'text'
@@ -53,8 +53,70 @@ const AgentChat: React.FC<AgentChatProps> = ({ isOpen, isMinimized, onToggle, po
     }
   }, []);
 
+  // Add a function to simulate the fake inquiry for demo purposes
+  const simulateDrugInteractionQuery = (queryText: string) => {
+    // Show loading indicator for initial processing
+    const loadingMessage: Message = {
+      id: Date.now().toString(),
+      content: "Processing...",
+      sender: 'agent',
+      timestamp: new Date(),
+      type: 'text'
+    };
+    
+    setMessages(prev => [...prev, loadingMessage]);
+    
+    // After a short delay, show the thinking status
+    setTimeout(() => {
+      // Update the loading message to show "thinking"
+      setMessages(prev => 
+        prev.map(msg => 
+          msg.content === "Processing..." 
+            ? {...msg, content: "Analyzing patient medication history..."}
+            : msg
+        )
+      );
+      
+      // Show more detailed processing
+      setTimeout(() => {
+        setMessages(prev => 
+          prev.map(msg => 
+            msg.content === "Analyzing patient medication history..." 
+              ? {...msg, content: "Checking drug interaction database..."}
+              : msg
+          )
+        );
+        
+        // Final response after processing
+        setTimeout(() => {
+          // Remove the loading message
+          setMessages(prev => prev.filter(msg => msg.content !== "Checking drug interaction database..."));
+          
+          // Add the response
+          const responseMessage: Message = {
+            id: Date.now().toString(),
+            content: "The patient has been prescribed (omeprazole) Prilosec to treat Gastroesophageal Reflux Disease (GERD). It is generally considered safe to take (omeprazole) Prilosec and ibuprofen together. However, the patient has a history of Gastroesophageal Reflux Disease (GERD) and Motrin (ibuprofen) is known to exacerbate symptoms.",
+            sender: 'agent',
+            timestamp: new Date(),
+            type: 'drug',
+            data: [
+              { 
+                medication: "Motrin (ibuprofen)", 
+                interactsWith: "Prilosec (omeprazole)", 
+                severity: "Moderate", 
+                recommendation: "Use with caution due to GERD history"
+              }
+            ]
+          };
+          
+          setMessages(prev => [...prev, responseMessage]);
+        }, 1500);
+      }, 1200);
+    }, 800);
+  };
+
   const handleSendMessage = async () => {
-    if (!inputValue.trim() || isLoading) return;
+    if (!inputValue.trim() && !isLoading) return;
     
     // Add user message
     const userMessage: Message = {
@@ -92,52 +154,59 @@ const AgentChat: React.FC<AgentChatProps> = ({ isOpen, isMinimized, onToggle, po
   
   const processUserMessage = async (message: string) => {
     try {
+      // For demo purposes, directly trigger the drug interaction flow if the message contains relevant keywords
+      if (message.toLowerCase().includes('motrin') && 
+          (message.toLowerCase().includes('interaction') || message.toLowerCase().includes('check'))) {
+        simulateDrugInteractionQuery(message);
+        return;
+      }
+      
       // Clear pending SQL query when starting a new conversation
       setPendingSqlQuery(null);
+      
+      // Add typing indicator
+      addAgentMessage({
+        content: '...',
+        type: 'text'
+      });
       
       const response = await axios.post(API_ENDPOINT, {
         userMessage: message,
         requestType: 'textToSql'
       });
       
-      const { sqlQuery, mockResult, queryType, message: responseMessage } = response.data;
+      // Remove typing indicator
+      setMessages(prev => prev.filter(msg => msg.content !== '...'));
       
-      // Extract SQL query - handle possible Claude formatting
-      let cleanSqlQuery = sqlQuery;
-      // If Claude returns a code block, extract just the SQL
-      if (sqlQuery.includes('```sql')) {
-        const sqlMatch = sqlQuery.match(/```sql\s*([\s\S]*?)\s*```/);
-        if (sqlMatch && sqlMatch[1]) {
-          cleanSqlQuery = sqlMatch[1].trim();
-        }
-      } else if (sqlQuery.includes('```')) {
-        const codeMatch = sqlQuery.match(/```\s*([\s\S]*?)\s*```/);
-        if (codeMatch && codeMatch[1]) {
-          cleanSqlQuery = codeMatch[1].trim();
-        }
-      }
+      const { sqlQuery, mockResult, queryType, message: responseMessage } = response.data;
       
       // Add agent response with SQL query
       addAgentMessage({
-        content: `I can help with that. Here's a SQL query I would use:`,
+        content: responseMessage || `I can help with that. Here's a SQL query I would use:`,
         type: queryType === 'drug' ? 'drug' : 'sql',
-        sqlQuery: cleanSqlQuery,
+        sqlQuery: sqlQuery,
         data: mockResult
       });
       
       // Store the SQL query for potential execution
-      setPendingSqlQuery(cleanSqlQuery);
-      
-      // Ask user if they want to execute
-      setTimeout(() => {
-        addAgentMessage({
-          content: 'Would you like me to execute this query against the healthcare database?',
-          type: 'text'
-        });
-      }, 500);
+      if (sqlQuery && queryType === 'sql') {
+        setPendingSqlQuery(sqlQuery);
+        
+        // Ask user if they want to execute
+        setTimeout(() => {
+          addAgentMessage({
+            content: 'Would you like me to execute this query against the healthcare database?',
+            type: 'text'
+          });
+        }, 500);
+      }
       
     } catch (error) {
       console.error('Error calling API:', error);
+      
+      // Remove typing indicator
+      setMessages(prev => prev.filter(msg => msg.content !== '...'));
+      
       addAgentMessage({
         content: 'Sorry, I encountered an error generating a SQL query. Please try rephrasing your question.',
         type: 'error'
@@ -147,16 +216,25 @@ const AgentChat: React.FC<AgentChatProps> = ({ isOpen, isMinimized, onToggle, po
   
   const executeSqlQuery = async (sqlQuery: string) => {
     try {
+      // Add typing indicator
+      addAgentMessage({
+        content: '...',
+        type: 'text'
+      });
+      
       const response = await axios.post(API_ENDPOINT, {
         sqlQuery,
         requestType: 'executeSql'
       });
       
+      // Remove typing indicator
+      setMessages(prev => prev.filter(msg => msg.content !== '...'));
+      
       const { columns, rows, message } = response.data;
       
       // Add agent response with query results
       addAgentMessage({
-        content: 'Query executed successfully. Here are the results:',
+        content: message || 'Query executed successfully. Here are the results:',
         type: 'sql',
         sqlQuery,
         data: rows
@@ -167,6 +245,10 @@ const AgentChat: React.FC<AgentChatProps> = ({ isOpen, isMinimized, onToggle, po
       
     } catch (error) {
       console.error('Error executing SQL:', error);
+      
+      // Remove typing indicator
+      setMessages(prev => prev.filter(msg => msg.content !== '...'));
+      
       addAgentMessage({
         content: 'Sorry, there was an error executing the SQL query. The database might be unavailable or the query is invalid.',
         type: 'error'
@@ -200,7 +282,7 @@ const AgentChat: React.FC<AgentChatProps> = ({ isOpen, isMinimized, onToggle, po
     }
   };
   
-  // Render SQL query and results in a nice format
+  // Modified to better handle drug interaction display
   const renderSqlContent = (message: Message) => {
     return (
       <div className="space-y-2 w-full">
@@ -227,9 +309,9 @@ const AgentChat: React.FC<AgentChatProps> = ({ isOpen, isMinimized, onToggle, po
               <tbody className="bg-white divide-y divide-gray-200">
                 {message.data.map((row, rowIndex) => (
                   <tr key={rowIndex}>
-                    {Object.values(row).map((value, cellIndex) => (
+                    {Object.entries(row).map(([key, value], cellIndex) => (
                       <td key={cellIndex} className="px-3 py-2 whitespace-nowrap text-xs text-gray-500">
-                        {value as string}
+                        {String(value)}
                       </td>
                     ))}
                   </tr>
@@ -242,21 +324,115 @@ const AgentChat: React.FC<AgentChatProps> = ({ isOpen, isMinimized, onToggle, po
     );
   };
 
+  // Removed demo button as requested
+
   return (
     <div
       style={{
         ...position,
-        width: '350px',
-        height: '450px',
+        width: '450px',
+        height: '550px',
       }}
-      className={`fixed transition-all duration-300 ease-in-out 
+      className={`fixed transition-all duration-300 ease-in-out z-50
       ${!isOpen || isMinimized
           ? 'opacity-0 pointer-events-none scale-95 translate-y-98'
           : 'opacity-100 scale-100 translate-y-0'
-        } bg-white rounded-t-lg shadow-lg border border-gray-200 flex flex-col`}
+        } bg-white rounded-lg shadow-lg border border-gray-200 flex flex-col`}
     >
-      {/* Rest of component remains the same */}
-      {/* ... */}
+      <div className="flex justify-between items-center bg-gradient-to-r from-sky-700 to-teal-600 text-white p-3 rounded-t-lg">
+        <div className="flex items-center">
+          <BsDatabaseCheck className="w-5 h-5 mr-2" />
+          <h3 className="text-sm font-semibold">Nurse AI Assistant</h3>
+        </div>
+        <button
+          onClick={onToggle}
+          className="hover:bg-teal-700 p-1 rounded transition-colors"
+        >
+          {isMinimized ? <AiOutlineExpandAlt className="w-4 h-4" /> : <AiOutlineMinusCircle className="w-4 h-4" />}
+        </button>
+      </div>
+      
+      <div className="flex-grow p-4 overflow-y-auto bg-gray-50">
+        <div className="space-y-4">
+          {messages.map((message) => (
+            <div
+              key={message.id}
+              className={`flex ${message.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div
+                className={`max-w-[80%] rounded-lg p-3 ${
+                  message.sender === 'user'
+                    ? 'bg-teal-600 text-white'
+                    : message.type === 'error'
+                    ? 'bg-red-50 text-red-600 border border-red-200'
+                    : message.type === 'drug'
+                    ? 'bg-yellow-50 text-gray-700 border border-yellow-200'
+                    : 'bg-white text-gray-700 border border-gray-200'
+                }`}
+              >
+                {message.type === 'sql' || message.type === 'drug' 
+                  ? renderSqlContent(message)
+                  : message.content === '...'
+                  ? <div className="typing-indicator"><span></span><span></span><span></span></div>
+                  : <p className="text-sm font-medium">{message.content}</p>
+                }
+              </div>
+            </div>
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
+      </div>
+      
+      <div className="p-3 border-t border-gray-200 bg-white rounded-b-lg">
+        <div className="flex items-center">
+          <textarea
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Type your question..."
+            className="flex-grow px-3 py-2 text-sm border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent resize-none"
+            rows={1}
+            disabled={isLoading}
+          />
+          <button
+            onClick={handleSendMessage}
+            disabled={isLoading || !inputValue.trim()}
+            className={`px-3 py-2 bg-teal-600 text-white rounded-r-md ${
+              isLoading || !inputValue.trim() ? 'opacity-50 cursor-not-allowed' : 'hover:bg-teal-700'
+            }`}
+          >
+            <IoSend className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+      
+      {/* Add some CSS for the typing indicator */}
+      <style jsx>{`
+        .typing-indicator {
+          display: flex;
+          align-items: center;
+          height: 20px;
+        }
+        .typing-indicator span {
+          height: 8px;
+          width: 8px;
+          background-color: #999;
+          border-radius: 50%;
+          display: inline-block;
+          margin: 0 2px;
+          animation: bounce 1.5s infinite ease-in-out;
+        }
+        .typing-indicator span:nth-child(2) {
+          animation-delay: 0.2s;
+        }
+        .typing-indicator span:nth-child(3) {
+          animation-delay: 0.4s;
+        }
+        @keyframes bounce {
+          0%, 80%, 100% { transform: translateY(0); }
+          40% { transform: translateY(-8px); }
+        }
+      `}</style>
     </div>
   );
 };
