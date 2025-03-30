@@ -58,6 +58,12 @@ const Sidebar: React.FC = () => {
                             {isExpanded && <span className="text-sm font-medium ml-2">Provider Locator</span>}
                         </Link>
                     </li>
+                    <li className={getLiClassName('/reports')}>
+                        <Link to="/reports" className="flex items-center space-x-3 w-full">
+                            <HiOutlineDocumentReport className="h-5 w-5" />
+                            {isExpanded && <span className="text-sm font-medium ml-2">Reports</span>}
+                        </Link>
+                    </li>
                     <li className={getLiClassName('/settings')}>
                         <Link to="/settings" className="flex items-center space-x-3 w-full">
                             <RiSettings4Line className="h-5 w-5" />

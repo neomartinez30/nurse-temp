@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard';
 import AgentDesk1 from './pages/AgentDesk1';
 import { ProviderLocation } from './pages/ProviderLocation';
 import ClinicalNotes from './pages/ClinicalNotes';
+import Reports from './pages/Reports';
 
 const MainPage = () => {
   const [sidebarExpanded, setSidebarExpanded] = useState(false);
@@ -38,6 +39,7 @@ const MainPage = () => {
               <Route path="/agent-desktop" element={<AgentDesk1 />} />
               <Route path="/clinical-notes" element={<ClinicalNotes />} />
               <Route path="/data" element={<ProviderLocation />} />
+              <Route path="/reports" element={<Reports />} />
               <Route path="/" element={<AgentDesk1 />} />
               <Route path="/settings" element={<Dashboard />} />
             </Routes>

@@ -10,7 +10,7 @@ const Navbar: React.FC = () => {
             {/* Logo and Title */}
             <div className="text-white font-bold flex-shrink-0 flex items-center">
                 <img 
-                    src="<option className='text-xs'>Moderate</option>"
+                    src="https://www.health.mil/-/media/Images/MHS/Infographics/DefenseHealthAgencyDHALogo2white.svg?iar=0&hash=2FDBEB9454DF95A1186BF15671AFFAF5F6ED997C"
                     alt="DHA Logo" 
                     className="h-8 mr-3 transition-transform duration-300 hover:scale-105"
                 />
@@ -57,7 +57,7 @@ const Navbar: React.FC = () => {
                     className="text-white hover:text-teal-300 transition-colors focus:outline-none flex items-center space-x-2 border-l border-gray-700 pl-4"
                 >
                     <FaUserCircle className="w-6 h-6" />
-                    <span className="text-sm hidden md:inline-block">Agent Name</span>
+                    <span className="text-sm hidden md:inline-block">Nancy Pineda</span>
                 </button>
             </div>
         </nav>
