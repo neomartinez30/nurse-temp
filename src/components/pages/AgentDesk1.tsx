@@ -13,7 +13,6 @@ import { RootState } from '../../store';
 import { updateCallerDataTable } from '../../store/slices/databaseSlice';
 import useCallState from '../../hooks/useCallState';
 
-
 interface FamilyMember {
   id: string;
   name: string;
@@ -49,13 +48,19 @@ const AgentDesk1: React.FC = () => {
   const [searchResults, setSearchResults] = useState<FamilyMember[]>([]);
   const [selectedMember, setSelectedMember] = useState<FamilyMember | null>(null);
 
+  // State for checkboxes
+  const [isTranscriptChecked, setIsTranscriptChecked] = useState(false);
+  const [isCaseDataChecked, setIsCaseDataChecked] = useState(false);
+  const [isClearTriageChecked, setIsClearTriageChecked] = useState(false);
+  const [isCareCoordinatorChecked, setIsCareCoordinatorChecked] = useState(false);
+
   useCallerData(callerId);
 
   useEffect(() => {
     let temp = callState.callerId?.slice(4) || null;
     console.log('tempppp:', temp);
     setCallerId(temp);
-  
+
     if (temp) {
       // Call the API to fetch caller info when a call is answered
       const callApi = async () => {
@@ -76,7 +81,7 @@ const AgentDesk1: React.FC = () => {
           console.error('Error calling API:', error);
         }
       };
-  
+
       callApi();
     }
   }, [callState.callerId]);
@@ -88,13 +93,13 @@ const AgentDesk1: React.FC = () => {
         // Example API call to update caller info
         // await api.updateCallerInfo(callerId, { Name: tempName });
       }
-  
+
       // Update Redux store
       dispatch(updateCallerDataTable({
         ...callerData,
         Name: tempName,
       }));
-  
+
       setIsEditing(false);
     } catch (error) {
       console.error('Error updating name:', error);
@@ -106,47 +111,47 @@ const AgentDesk1: React.FC = () => {
     setIsEditing(true); // Enable editing mode
   };
 
-const renderNameField = () => (
-  <div className='flex items-center space-x-2'>
-    {isEditing ? (
-      <div className='flex items-center space-x-2'>
-        <input
-          type="text"
-          value={tempName}
-          onChange={(e) => setTempName(e.target.value)}
-          className='text-sm border rounded px-3 py-1.5 w-full focus:ring-2 focus:ring-teal-500 focus:border-transparent'
-          autoFocus
-        />
-        <button
-          onClick={handleSave}
-          className='text-sm text-white bg-teal-600 hover:bg-teal-700 transition-colors px-3 py-1.5 rounded shadow-sm'
-          disabled={isLoading}
-        >
-          {isLoading ? 'Saving...' : 'Save'}
-        </button>
-        <button
-          onClick={() => setIsEditing(false)}
-          className='text-sm text-white bg-gray-500 hover:bg-gray-600 transition-colors px-3 py-1.5 rounded shadow-sm'
-          disabled={isLoading}
-        >
-          Cancel
-        </button>
-      </div>
-    ) : (
-      <div className='flex items-center space-x-2 w-full'>
-        <span className='text-xl text-white font-semibold'>
-          {isLoading ? 'Loading...' : callerData1?.Name || 'Unknown'}
-        </span>
-        <button
-          onClick={handleEditClick}
-          className='text-sm text-white hover:text-teal-200 transition-colors bg-teal-700 rounded-full p-1'
-        >
-          <MdEdit />
-        </button>
-      </div>
-    )}
-  </div>
-);
+  const renderNameField = () => (
+    <div className='flex items-center space-x-2'>
+      {isEditing ? (
+        <div className='flex items-center space-x-2'>
+          <input
+            type="text"
+            value={tempName}
+            onChange={(e) => setTempName(e.target.value)}
+            className='text-sm border rounded px-3 py-1.5 w-full focus:ring-2 focus:ring-teal-500 focus:border-transparent'
+            autoFocus
+          />
+          <button
+            onClick={handleSave}
+            className='text-sm text-white bg-teal-600 hover:bg-teal-700 transition-colors px-3 py-1.5 rounded shadow-sm'
+            disabled={isLoading}
+          >
+            {isLoading ? 'Saving...' : 'Save'}
+          </button>
+          <button
+            onClick={() => setIsEditing(false)}
+            className='text-sm text-white bg-gray-500 hover:bg-gray-600 transition-colors px-3 py-1.5 rounded shadow-sm'
+            disabled={isLoading}
+          >
+            Cancel
+          </button>
+        </div>
+      ) : (
+        <div className='flex items-center space-x-2 w-full'>
+          <span className='text-xl text-white font-semibold'>
+            {isLoading ? 'Loading...' : callerData1?.Name || 'Unknown'}
+          </span>
+          <button
+            onClick={handleEditClick}
+            className='text-sm text-white hover:text-teal-200 transition-colors bg-teal-700 rounded-full p-1'
+          >
+            <MdEdit />
+          </button>
+        </div>
+      )}
+    </div>
+  );
 
   const toggleVideoWindow = () => {
     if (isMinimized) {
@@ -155,28 +160,28 @@ const renderNameField = () => (
       setIsVideoOpen(!isVideoOpen);
     }
   };
-  
+
   const minimizeVideoWindow = () => {
     setIsMinimized(true);
   };
-  
+
   const closeVideoWindow = () => {
     setIsVideoOpen(false);
     setIsMinimized(false);
   };
-  
+
   const toggleDODVisibility = () => {
     setIsDODVisible(!isDODVisible);
   };
-  
+
   const toggleMedicalNotes = () => {
     setIsMedicalNotesCollapsed(!isMedicalNotesCollapsed);
   };
-  
+
   const toggleCCicalNotes = () => {
-    setIsCareCoNotesCollapsed(!isCareCoNotesCollapsed);
+    setIsCareCoNotesCollapsed(!isIsCareCoNotesCollapsed);
   };
-  
+
   const toggleCRMedicalNotes = () => {
     setIsContactRecNotesCollapsed(!isContactRecNotesCollapsed);
   };
@@ -320,7 +325,7 @@ const renderNameField = () => (
                         </div>
                       ) : (
                         <button disabled className="text-gray-500 flex items-center justify-center gap-2 h-fit text-xs px-4 py-2 border rounded-md bg-gray-50">
-                          <RiWifiOffLine />  
+                          <RiWifiOffLine />
                           Offline Verification
                         </button>
                       )}
@@ -518,8 +523,8 @@ const renderNameField = () => (
                 </div>
                 <div className="mb-4 ml-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">Contact Summary:</label>
-                  <textarea 
-                    className="mt-1 p-3 block w-full border border-gray-300 rounded focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm" 
+                  <textarea
+                    className="mt-1 p-3 block w-full border border-gray-300 rounded focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm"
                     rows={5}
                     placeholder="Enter contact summary..."
                   ></textarea>
@@ -586,7 +591,6 @@ const renderNameField = () => (
 
             </div>
 
-
             {/* Nurse's Toolkit */}
             <div className="w-3/7 mb-4 bg-white flex flex-col rounded-lg shadow-md h-auto">
               <div className="flex-col p-3 border-b border-gray-200 bg-gray-100">
@@ -605,7 +609,6 @@ const renderNameField = () => (
             </div>
 
           </section>
-
 
           {/* Medical Notes Section */}
           <section className="bg-white rounded-lg shadow-md p-4 ml-4 mb-6">
@@ -640,19 +643,60 @@ const renderNameField = () => (
                 </div>
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">Justification</label>
-                  <textarea 
-                    placeholder="Enter justification here..." 
-                    className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm" 
+                  <textarea
+                    placeholder="Enter justification here..."
+                    className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm"
                     rows={3}
                   ></textarea>
                 </div>
                 <div className="mb-4">
                   <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-                  <textarea 
-                    placeholder="Enter medical notes here..." 
-                    className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm" 
+                  <textarea
+                    placeholder="Enter medical notes here..."
+                    className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm"
                     rows={3}
                   ></textarea>
+                </div>
+                <div className="mb-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Checkboxes:</label>
+                  <div className="flex space-x-4">
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={isTranscriptChecked}
+                        onChange={() => setIsTranscriptChecked(!isTranscriptChecked)}
+                        className="form-checkbox text-teal-600"
+                      />
+                      <span className="text-sm">Transcript</span>
+                    </label>
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={isCaseDataChecked}
+                        onChange={() => setIsCaseDataChecked(!isCaseDataChecked)}
+                        className="form-checkbox text-teal-600"
+                      />
+                      <span className="text-sm">Case Data</span>
+                    </label>
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={isClearTriageChecked}
+                        onChange={() => setIsClearTriageChecked(!isClearTriageChecked)}
+                        className="form-checkbox text-teal-600"
+                      />
+                      <span className="text-sm">ClearTriage</span>
+                    </label>
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        checked={isCareCoordinatorChecked}
+                        onChange={() => setIsCareCoordinatorChecked(!isCareCoordinatorChecked)}
+                        className="form-checkbox text-teal-600"
+                      />
+                      <span className="text-sm">Care Coordinator Notes</span>
+                    </label>
+                  </div>
                 </div>
               </div>
               <div className='w-3/7 mt-7'>
@@ -694,9 +738,9 @@ const renderNameField = () => (
             {isCareCoNotesCollapsed && (
               <div className='block w-full'>
                 <div className="mb-2">
-                  <textarea 
-                    placeholder='Type Care Coordinator Notes...' 
-                    className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm" 
+                  <textarea
+                    placeholder='Type Care Coordinator Notes...'
+                    className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm"
                     rows={3}
                   ></textarea>
                 </div>
@@ -715,9 +759,9 @@ const renderNameField = () => (
             {isContactRecNotesCollapsed && (
               <div className='block w-full'>
                 <div className="mb-2">
-                  <textarea 
-                    placeholder='Type Contact Records...' 
-                    className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm" 
+                  <textarea
+                    placeholder='Type Contact Records...'
+                    className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm"
                     rows={3}
                   ></textarea>
                 </div>
