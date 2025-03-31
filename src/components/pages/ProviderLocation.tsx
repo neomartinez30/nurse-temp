@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { IoMdCopy, IoMdArrowRoundForward } from 'react-icons/io';
+import { useState } from 'react';
+import { IoMdArrowRoundForward } from 'react-icons/io';
 import { AiOutlineCalendar, AiOutlinePhone, AiOutlineEnvironment } from 'react-icons/ai';
 import { BsHospital, BsPersonBadge, BsTranslate } from 'react-icons/bs';
 import { MdOutlineVerifiedUser, MdOutlineStickyNote2 } from 'react-icons/md';

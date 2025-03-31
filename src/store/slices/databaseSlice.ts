@@ -8,7 +8,7 @@ const initialState: CallerDataTable = {
     AccountNumber: null,
     DOD_ID: null,
     FamilyMembers: [],
-    TickerNumber: null,
+    TicketNumber: null,
     TicketStatus: null,
     TicketOwner: null,
     TicketCreatedAt: null,

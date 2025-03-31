@@ -55,6 +55,9 @@ const AgentChat: React.FC<AgentChatProps> = ({ isOpen, isMinimized, onToggle, po
 
   // Add a function to simulate the fake inquiry for demo purposes
   const simulateDrugInteractionQuery = (queryText: string) => {
+    // Log the query for future reference/debugging
+    console.log('Drug interaction query received:', queryText);
+    
     // Show loading indicator for initial processing
     const loadingMessage: Message = {
       id: Date.now().toString(),
@@ -66,16 +69,16 @@ const AgentChat: React.FC<AgentChatProps> = ({ isOpen, isMinimized, onToggle, po
     
     setMessages(prev => [...prev, loadingMessage]);
     
-    // After a short delay, show the thinking status
-    setTimeout(() => {
-      // Update the loading message to show "thinking"
-      setMessages(prev => 
-        prev.map(msg => 
-          msg.content === "Processing..." 
-            ? {...msg, content: "Analyzing patient medication history..."}
-            : msg
-        )
-      );
+  // After a short delay, show the thinking status
+  setTimeout(() => {
+    // Update the loading message to show "thinking"
+    setMessages(prev => 
+      prev.map(msg => 
+        msg.content === "Processing..." 
+          ? {...msg, content: "Analyzing patient medication history..."}
+          : msg
+      )
+    );
       
       // Show more detailed processing
       setTimeout(() => {

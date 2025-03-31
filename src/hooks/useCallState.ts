@@ -11,67 +11,84 @@ const useCallState = () => {
     const navigate = useNavigate();
     const isCallActive = callState.isCallActive;
     let formattedDate = '';
-    const CallerDataTable = useSelector((state: RootState) => state.database);
+    // Commented out unused variable
+    // const CallerDataTable = useSelector((state: RootState) => state.database);
 
     useEffect(() => {
-        const messageHandler = (event: MessageEvent) => {
+        // Define functions first before using them
+        
+        const updateGenesysAttributes = (interactionId: string, ticketNumber: string, customerName: string = 'Unknown') => {
             try {
-                console.log('Raw message event:', event.data);
-                const message = JSON.parse(event.data);
-                console.log('Parsed message:', message);
+                const softphoneIframe = document.getElementById("softphone") as HTMLIFrameElement;
+                if (softphoneIframe?.contentWindow) {
+                    console.log('Sending attributes to Genesys:', {
+                        interactionId,
+                        ticketNumber,
+                        customerName
+                    });
 
-                // Extract phone and state information
-                const temp = message.data.interaction?.new?.phone ?? message.data.interaction?.phone;
-                const callstat = message.data.interaction?.state ?? message.data.interaction?.new?.state;
-                const interactionId = message.data.interaction?.new?.id ?? message.data.interaction?.id;
-
-                console.log('Call state details:', {
-                    phone: temp,
-                    state: callstat,
-                    interactionId,
-                    isCallActive
-                });
-
-                // Handle different call states
-                switch (callstat) {
-                    case "ALERTING":
-                        console.log('Handling ALERTING state');
-                        dispatch(updateCallState({ 
-                            isCallActive: true, 
-                            callerId: 'Identifying', 
-                            stateOfCall: 'ALERTING',
-                            interactionID: interactionId 
-                        }));
-                        break;
-
-                    case "CONNECTED":
-                        console.log('Handling CONNECTED state');
-                        handleConnectedState(message, temp, interactionId);
-                        break;
-
-                    case "DISCONNECTED":
-                        console.log('Handling DISCONNECTED state');
-                        handleDisconnectedState(message, interactionId);
-                        break;
-
-                    default:
-                        console.log('Unhandled call state:', callstat);
-                        dispatch(updateCallState({ 
-                            isCallActive: false, 
-                            callerId: '-', 
-                            stateOfCall: 'IDLE',
-                            interactionID: null 
-                        }));
+                    softphoneIframe.contentWindow.postMessage(JSON.stringify({
+                        type: 'addAttribute',
+                        data: {
+                            interactionId,
+                            attributes: {
+                                TicketNumber: ticketNumber,
+                                CustomerName: customerName
+                            }
+                        }
+                    }), "*");
                 }
             } catch (error) {
-                console.error('Error processing message:', error);
+                console.error('Error sending attributes to Genesys:', error);
+            }
+        };
+
+        const handleDisconnectedState = async (message: any) => {
+            if (message.data.category === "acw") {
+                try {
+                    // Get interactionId from the message
+                    const interactionId = message.data.interaction?.id || message.data.interaction?.new?.id;
+                    
+                    const response = await fetch('https://sqc5jqut58.execute-api.us-east-1.amazonaws.com/dev/caller-attributes', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ conversationID: interactionId })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to update caller attributes');
+                    }
+
+                    // Reset state after successful API call
+                    dispatch(updateCallState({ 
+                        isCallActive: false, 
+                        callerId: '-', 
+                        stateOfCall: 'IDLE',
+                        interactionID: null 
+                    }));
+                    dispatch(updateCallerDataTable({
+                        PhoneNumber: '',
+                        Name: '-',
+                        AccountNumber: '-',
+                        DOD_ID: '-',
+                        FamilyMembers: [],
+                        TicketNumber: '-',
+                        TicketStatus: '-',
+                        TicketOwner: '-',
+                        TicketCreatedAt: '-'
+                    }));
+                } catch (error) {
+                    console.error('Error updating caller attributes:', error);
+                }
             }
         };
 
         const handleConnectedState = async (message: any, temp: string, interactionId: string) => {
             const currentState = store.getState();
             const existingTicket = currentState.database?.TicketNumber;
-            let ticketNumber = existingTicket;
+            
+            // Make sure ticketNumber is always a string
+            let ticketNumber = existingTicket || '';
 
             if (!existingTicket || existingTicket === '-') {
                 ticketNumber = `TK${Math.floor(Math.random() * 10000000)}`;
@@ -117,67 +134,65 @@ const useCallState = () => {
                     TicketCreatedAt: formattedDate
                 }));
 
-  
-        const updateGenesysAttributes = (interactionId: string, ticketNumber: string, customerName: string = 'Unknown') => {
-            try {
-              const softphoneIframe = document.getElementById("softphone") as HTMLIFrameElement;
-              if (softphoneIframe?.contentWindow) {
-                console.log('Sending attributes to Genesys:', {
-                  interactionId,
-                  ticketNumber,
-                  customerName
-                });
-          
-                softphoneIframe.contentWindow.postMessage(JSON.stringify({
-                  type: 'addAttribute',
-                  data: {
-                    interactionId,
-                    attributes: {
-                      TicketNumber: ticketNumber,
-                      CustomerName: customerName || 'Unknown' // Ensure customerName is never null
-                    }
-                  }
-                }), "*");
-              }
-            } catch (error) {
-              console.error('Error sending attributes to Genesys:', error);
+                // Send attributes to Genesys - make sure ticketNumber is a string
+                updateGenesysAttributes(interactionId, ticketNumber, currentState.database?.Name || 'Unknown');
             }
-          };
 
-        const handleDisconnectedState = async (message: any, interactionId: string) => {
-            if (message.data.category === "acw") {
-                try {
-                    const response = await fetch('https://sqc5jqut58.execute-api.us-east-1.amazonaws.com/dev/caller-attributes', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ conversationID: interactionId })
-                    });
+            navigate('/agent-desktop');
+        };
 
-                    if (!response.ok) {
-                        throw new Error('Failed to update caller attributes');
-                    }
+        // Now use the functions in the message handler
+        const messageHandler = (event: MessageEvent) => {
+            try {
+                console.log('Raw message event:', event.data);
+                const message = JSON.parse(event.data);
+                console.log('Parsed message:', message);
 
-                    // Reset state after successful API call
-                    dispatch(updateCallState({ 
-                        isCallActive: false, 
-                        callerId: '-', 
-                        stateOfCall: 'IDLE',
-                        interactionID: null 
-                    }));
-                    dispatch(updateCallerDataTable({
-                        PhoneNumber: '',
-                        Name: '-',
-                        AccountNumber: '-',
-                        DOD_ID: '-',
-                        FamilyMembers: [],
-                        TicketNumber: '-',
-                        TicketStatus: '-',
-                        TicketOwner: '-',
-                        TicketCreatedAt: '-'
-                    }));
-                } catch (error) {
-                    console.error('Error updating caller attributes:', error);
+                // Extract phone and state information
+                const temp = message.data.interaction?.new?.phone ?? message.data.interaction?.phone;
+                const callstat = message.data.interaction?.state ?? message.data.interaction?.new?.state;
+                const interactionId = message.data.interaction?.new?.id ?? message.data.interaction?.id;
+
+                console.log('Call state details:', {
+                    phone: temp,
+                    state: callstat,
+                    interactionId,
+                    isCallActive
+                });
+
+                // Handle different call states
+                switch (callstat) {
+                    case "ALERTING":
+                        console.log('Handling ALERTING state');
+                        dispatch(updateCallState({ 
+                            isCallActive: true, 
+                            callerId: 'Identifying', 
+                            stateOfCall: 'ALERTING',
+                            interactionID: interactionId 
+                        }));
+                        break;
+
+                    case "CONNECTED":
+                        console.log('Handling CONNECTED state');
+                        handleConnectedState(message, temp, interactionId);
+                        break;
+
+                    case "DISCONNECTED":
+                        console.log('Handling DISCONNECTED state');
+                        handleDisconnectedState(message);
+                        break;
+
+                    default:
+                        console.log('Unhandled call state:', callstat);
+                        dispatch(updateCallState({ 
+                            isCallActive: false, 
+                            callerId: '-', 
+                            stateOfCall: 'IDLE',
+                            interactionID: null 
+                        }));
                 }
+            } catch (error) {
+                console.error('Error processing message:', error);
             }
         };
 
