@@ -53,87 +53,100 @@ const AgentDesk1: React.FC = () => {
 
   useEffect(() => {
     let temp = callState.callerId?.slice(4) || null;
+    console.log('tempppp:', temp);
     setCallerId(temp);
+  
+    if (temp) {
+      // Call the API to fetch caller info when a call is answered
+      const callApi = async () => {
+        try {
+          const response = await fetch('https://cyjrnbi0cg.execute-api.us-east-1.amazonaws.com/dev/onAction', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ onAction: 'joinMeeting' }),
+          });
+          const data = await response.json();
+          if (data.statusCode === 200) {
+            setUniqueKey(data.body.uniqueKey);
+            console.log('Unique Key:', data.body.uniqueKey);
+          }
+        } catch (error) {
+          console.error('Error calling API:', error);
+        }
+      };
+  
+      callApi();
+    }
   }, [callState.callerId]);
 
-  const handleSearch = (term: string) => {
-    setSearchTerm(term);
-    if (!term.trim() || !callerData1.FamilyMembers) {
-      setSearchResults([]);
-      return;
-    }
-
-    const termLower = term.toLowerCase();
-    const results = (callerData1.FamilyMembers as FamilyMember[])
-      .filter(member =>
-        member.name.toLowerCase().includes(termLower)
-      );
-
-    setSearchResults(results);
-  };
-  
-  const handleEditClick = () => {
-    setIsEditing(true);
-  };
-  
   const handleSave = async () => {
     try {
+      // Optional: Call API to update the backend
       if (callerId) {
-        // API call would go here if needed
+        // Example API call to update caller info
+        // await api.updateCallerInfo(callerId, { Name: tempName });
       }
-
+  
+      // Update Redux store
       dispatch(updateCallerDataTable({
         ...callerData,
-        Name: tempName
+        Name: tempName,
       }));
-
+  
       setIsEditing(false);
     } catch (error) {
       console.error('Error updating name:', error);
     }
   };
 
-  const renderNameField = () => (
-    <div className='flex items-center space-x-2'>
-      {isEditing ? (
-        <div className='flex items-center space-x-2'>
-          <input
-            type="text"
-            value={tempName}
-            onChange={(e) => setTempName(e.target.value)}
-            className='text-sm border rounded px-3 py-1.5 w-full focus:ring-2 focus:ring-teal-500 focus:border-transparent'
-            autoFocus
-          />
-          <button
-            onClick={handleSave}
-            className='text-sm text-white bg-teal-600 hover:bg-teal-700 transition-colors px-3 py-1.5 rounded shadow-sm'
-            disabled={isLoading}
-          >
-            {isLoading ? 'Saving...' : 'Save'}
-          </button>
-          <button
-            onClick={() => setIsEditing(false)}
-            className='text-sm text-white bg-gray-500 hover:bg-gray-600 transition-colors px-3 py-1.5 rounded shadow-sm'
-            disabled={isLoading}
-          >
-            Cancel
-          </button>
-        </div>
-      ) : (
-        <div className='flex items-center space-x-2 w-full'>
-          <span className='text-xl text-white font-semibold'>
-            {isLoading ? 'Loading...' : callerData1?.Name || 'Unknown'}
-          </span>
-          <button
-            onClick={handleEditClick}
-            className='text-sm text-white hover:text-teal-200 transition-colors bg-teal-700 rounded-full p-1'
-          >
-            <MdEdit />
-          </button>
-        </div>
-      )}
-    </div>
-  );
+  const handleEditClick = () => {
+    setTempName(callerData?.name || ''); // Set the temporary name to the current caller's name
+    setIsEditing(true); // Enable editing mode
+  };
+
+const renderNameField = () => (
+  <div className='flex items-center space-x-2'>
+    {isEditing ? (
+      <div className='flex items-center space-x-2'>
+        <input
+          type="text"
+          value={tempName}
+          onChange={(e) => setTempName(e.target.value)}
+          className='text-sm border rounded px-3 py-1.5 w-full focus:ring-2 focus:ring-teal-500 focus:border-transparent'
+          autoFocus
+        />
+        <button
+          onClick={handleSave}
+          className='text-sm text-white bg-teal-600 hover:bg-teal-700 transition-colors px-3 py-1.5 rounded shadow-sm'
+          disabled={isLoading}
+        >
+          {isLoading ? 'Saving...' : 'Save'}
+        </button>
+        <button
+          onClick={() => setIsEditing(false)}
+          className='text-sm text-white bg-gray-500 hover:bg-gray-600 transition-colors px-3 py-1.5 rounded shadow-sm'
+          disabled={isLoading}
+        >
+          Cancel
+        </button>
+      </div>
+    ) : (
+      <div className='flex items-center space-x-2 w-full'>
+        <span className='text-xl text-white font-semibold'>
+          {isLoading ? 'Loading...' : callerData1?.Name || 'Unknown'}
+        </span>
+        <button
+          onClick={handleEditClick}
+          className='text-sm text-white hover:text-teal-200 transition-colors bg-teal-700 rounded-full p-1'
+        >
+          <MdEdit />
+        </button>
+      </div>
+    )}
+  </div>
+);
 
   const toggleVideoWindow = () => {
     if (isMinimized) {
@@ -167,6 +180,10 @@ const AgentDesk1: React.FC = () => {
   const toggleCRMedicalNotes = () => {
     setIsContactRecNotesCollapsed(!isContactRecNotesCollapsed);
   };
+
+  function handleSearch(value: string): void {
+    throw new Error('Function not implemented.');
+  }
 
   return (
     <div className="flex ml-2 bg-gray-50 flex-col h-full">
@@ -215,7 +232,7 @@ const AgentDesk1: React.FC = () => {
 
                 <div className='p-3'>
                   <div className='flex justify-between mb-2'>
-                    <h3 className="text-sm font-semibold text-gray-700 bg-gray-100 py-1 px-3 rounded-md shadow-sm">CUSTOMER INFORMATION</h3>
+                    <h3 className="text-sm font-semibold text-gray-700 bg-gray-100 py-1 px-3 rounded-md shadow-sm">PATIENT INFORMATION</h3>
                     <button className="bg-teal-600 hover:bg-teal-700 text-white text-xs px-3 py-1 rounded shadow transition-colors">
                       Save to Ticket
                     </button>
@@ -224,7 +241,7 @@ const AgentDesk1: React.FC = () => {
                     <div className="relative border w-full justify-between items-center rounded flex">
                       <input
                         type="text"
-                        placeholder="Search family members..."
+                        placeholder="Patient lookup..."
                         value={searchTerm}
                         onChange={(e) => handleSearch(e.target.value)}
                         className='w-full text-xs rounded-md px-4 py-2 border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50'
@@ -769,3 +786,7 @@ const AgentDesk1: React.FC = () => {
 };
 
 export default AgentDesk1;
+
+function setUniqueKey(uniqueKey: any) {
+  throw new Error('Function not implemented.');
+}
