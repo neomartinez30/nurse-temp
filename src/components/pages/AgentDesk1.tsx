@@ -31,9 +31,9 @@ const AgentDesk1: React.FC = () => {
   const [isContactRecNotesCollapsed, setIsContactRecNotesCollapsed] = useState(false);
   const [activeTab, setActiveTab] = useState<'DEERS' | 'MedicalHistory'>('DEERS');
   const [isDODVisible, setIsDODVisible] = useState(false);
-
   const [isVideoOpen, setIsVideoOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const dispatch = useDispatch();
   const callState = useSelector((state: RootState) => state.call);
@@ -48,67 +48,48 @@ const AgentDesk1: React.FC = () => {
   const [searchResults, setSearchResults] = useState<FamilyMember[]>([]);
   const [selectedMember, setSelectedMember] = useState<FamilyMember | null>(null);
 
-  // State for checkboxes
-  const [isTranscriptChecked, setIsTranscriptChecked] = useState(false);
-  const [isCaseDataChecked, setIsCaseDataChecked] = useState(false);
-  const [isClearTriageChecked, setIsClearTriageChecked] = useState(false);
-  const [isCareCoordinatorChecked, setIsCareCoordinatorChecked] = useState(false);
-
   useCallerData(callerId);
 
   useEffect(() => {
     let temp = callState.callerId?.slice(4) || null;
-    console.log('tempppp:', temp);
     setCallerId(temp);
-
-    if (temp) {
-      // Call the API to fetch caller info when a call is answered
-      const callApi = async () => {
-        try {
-          const response = await fetch('https://cyjrnbi0cg.execute-api.us-east-1.amazonaws.com/dev/onAction', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ onAction: 'joinMeeting' }),
-          });
-          const data = await response.json();
-          if (data.statusCode === 200) {
-            setUniqueKey(data.body.uniqueKey);
-            console.log('Unique Key:', data.body.uniqueKey);
-          }
-        } catch (error) {
-          console.error('Error calling API:', error);
-        }
-      };
-
-      callApi();
-    }
   }, [callState.callerId]);
+
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    if (!term.trim() || !callerData1.FamilyMembers) {
+      setSearchResults([]);
+      return;
+    }
+
+    const termLower = term.toLowerCase();
+    const results = (callerData1.FamilyMembers as FamilyMember[])
+      .filter(member =>
+        member.name.toLowerCase().includes(termLower)
+      );
+
+    setSearchResults(results);
+  };
+
+  const handleEditClick = () => {
+    setIsEditing(true);
+  };
 
   const handleSave = async () => {
     try {
-      // Optional: Call API to update the backend
       if (callerId) {
-        // Example API call to update caller info
-        // await api.updateCallerInfo(callerId, { Name: tempName });
+        // API call would go here if needed
       }
 
-      // Update Redux store
       dispatch(updateCallerDataTable({
         ...callerData,
-        Name: tempName,
+        Name: tempName
       }));
 
       setIsEditing(false);
     } catch (error) {
       console.error('Error updating name:', error);
     }
-  };
-
-  const handleEditClick = () => {
-    setTempName(callerData?.name || ''); // Set the temporary name to the current caller's name
-    setIsEditing(true); // Enable editing mode
   };
 
   const renderNameField = () => (
@@ -179,16 +160,30 @@ const AgentDesk1: React.FC = () => {
   };
 
   const toggleCCicalNotes = () => {
-    setIsCareCoNotesCollapsed(!isIsCareCoNotesCollapsed);
+    setIsCareCoNotesCollapsed(!isCareCoNotesCollapsed);
   };
 
   const toggleCRMedicalNotes = () => {
     setIsContactRecNotesCollapsed(!isContactRecNotesCollapsed);
   };
 
-  function handleSearch(value: string): void {
-    throw new Error('Function not implemented.');
-  }
+  const Modal = ({ isVisible, onClose }) => {
+    if (!isVisible) return null;
+
+    return (
+      <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+        <div className="bg-white p-6 rounded-lg shadow-lg">
+          <p className="text-gray-700">Generating medical notes. Please check the clinical notes for results.</p>
+          <button
+            onClick={onClose}
+            className="mt-4 px-4 py-2 bg-teal-600 text-white rounded hover:bg-teal-700"
+          >
+            OK
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="flex ml-2 bg-gray-50 flex-col h-full">
@@ -237,7 +232,7 @@ const AgentDesk1: React.FC = () => {
 
                 <div className='p-3'>
                   <div className='flex justify-between mb-2'>
-                    <h3 className="text-sm font-semibold text-gray-700 bg-gray-100 py-1 px-3 rounded-md shadow-sm">PATIENT INFORMATION</h3>
+                    <h3 className="text-sm font-semibold text-gray-700 bg-gray-100 py-1 px-3 rounded-md shadow-sm">CUSTOMER INFORMATION</h3>
                     <button className="bg-teal-600 hover:bg-teal-700 text-white text-xs px-3 py-1 rounded shadow transition-colors">
                       Save to Ticket
                     </button>
@@ -246,7 +241,7 @@ const AgentDesk1: React.FC = () => {
                     <div className="relative border w-full justify-between items-center rounded flex">
                       <input
                         type="text"
-                        placeholder="Patient lookup..."
+                        placeholder="Search family members..."
                         value={searchTerm}
                         onChange={(e) => handleSearch(e.target.value)}
                         className='w-full text-xs rounded-md px-4 py-2 border-gray-300 focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50'
@@ -619,7 +614,7 @@ const AgentDesk1: React.FC = () => {
                     MEDICAL NOTES
                     {isMedicalNotesCollapsed ? <ImCircleDown className="ml-2" /> : <ImCircleUp className="ml-2" />}
                   </h3>
-                  <button className="py-2 px-4 text-xs bg-teal-600 hover:bg-teal-700 text-white rounded shadow transition-colors">
+                  <button className="py-2 px-4 text-xs bg-teal-600 hover:bg-teal-700 text-white rounded shadow transition-colors" onClick={() => setIsModalVisible(true)}>
                     Generate Medical Notes
                   </button>
                 </div>
@@ -656,47 +651,6 @@ const AgentDesk1: React.FC = () => {
                     className="w-full p-3 border border-gray-300 rounded focus:ring-2 focus:ring-teal-500 focus:border-transparent text-sm"
                     rows={3}
                   ></textarea>
-                </div>
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Checkboxes:</label>
-                  <div className="flex space-x-4">
-                    <label className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        checked={isTranscriptChecked}
-                        onChange={() => setIsTranscriptChecked(!isTranscriptChecked)}
-                        className="form-checkbox text-teal-600"
-                      />
-                      <span className="text-sm">Transcript</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        checked={isCaseDataChecked}
-                        onChange={() => setIsCaseDataChecked(!isCaseDataChecked)}
-                        className="form-checkbox text-teal-600"
-                      />
-                      <span className="text-sm">Case Data</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        checked={isClearTriageChecked}
-                        onChange={() => setIsClearTriageChecked(!isClearTriageChecked)}
-                        className="form-checkbox text-teal-600"
-                      />
-                      <span className="text-sm">ClearTriage</span>
-                    </label>
-                    <label className="flex items-center space-x-2">
-                      <input
-                        type="checkbox"
-                        checked={isCareCoordinatorChecked}
-                        onChange={() => setIsCareCoordinatorChecked(!isCareCoordinatorChecked)}
-                        className="form-checkbox text-teal-600"
-                      />
-                      <span className="text-sm">Care Coordinator Notes</span>
-                    </label>
-                  </div>
                 </div>
               </div>
               <div className='w-3/7 mt-7'>
@@ -830,7 +784,3 @@ const AgentDesk1: React.FC = () => {
 };
 
 export default AgentDesk1;
-
-function setUniqueKey(uniqueKey: any) {
-  throw new Error('Function not implemented.');
-}
